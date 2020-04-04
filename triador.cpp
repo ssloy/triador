@@ -1,13 +1,14 @@
 #undef NDEBUG
 #include <cassert>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <cstring>
 #include <vector>
 
 using namespace std;
 
-vector<int> memory = {0,0,0,0,0,0,0,0,0,0,0,0,-13};
+vector<int> memory = {0,0,0,0,0,0,0,0,0,0,0,0,0};
 int borrow_carry = 0;
 int pc = 0; // program counter
 
@@ -60,9 +61,14 @@ void load_program(const char *filename, vector<string> &instructions, vector<int
 
 void display_memory() {
     for (int i=0; i<13; i++) {
-        cout << "R" << (i+1) << ": " << memory[i] << "\t";
+        if (i<9) cout << " ";
+        cout << "R" << (i+1) << " ";
     }
-    cout << "C: " << borrow_carry  << "\t PC: " << (pc-364) << endl;
+    cout << " C   PC" << endl;
+    for (int i=0; i<13; i++) {
+        cout << setw(3) << memory[i] << " ";
+    }
+    cout << setw(2) << borrow_carry  << "  " << setw(4) << (pc-364) << endl << endl;
 }
 
 void execute(vector<string> &opcodes, vector<int> &args) {
@@ -81,8 +87,8 @@ void execute(vector<string> &opcodes, vector<int> &args) {
             if (abs(arg)==1) {
                 memory[0] += arg;
                 if (abs(memory[0])<=13) borrow_carry = 0;
-                else if (memory[0]> 13) { borrow_carry =  1; memory[0] -= 13; }
-                else if (memory[0]<-13) { borrow_carry = -1; memory[0] += 13; }
+                else if (memory[0]> 13) { borrow_carry =  1; memory[0] -= 27; }
+                else if (memory[0]<-13) { borrow_carry = -1; memory[0] += 27; }
             } else {
                 memory[arg<0 ? -arg-1 : 0] = memory[arg<0 ? 0 : arg-1];
             }
