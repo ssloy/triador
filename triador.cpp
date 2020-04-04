@@ -5,15 +5,19 @@
 #include <fstream>
 #include <cstring>
 #include <vector>
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
-vector<int> memory = {0,0,0,0,0,0,0,0,0,0,0,0,0};
-int borrow_carry = 0;
-int pc = 0; // program counter
+// TRIADOR state:
+vector<int> R = {0,0,0,0,0,0,0,0,0,0,0,0,0}; // 13 registers, valid range for each one -13..+13
+int  C = 0;                                  // borrow-carry flag, valid values -1,0,+1
+int PC = 0;                                  // program counter, valid range -364..+364
 
+void load_program(const char *filename, vector<string> &opcodes, vector<int> &opargs) {
 // The program file must contain a single instruction per line.
-// The instruction must be in the first 6 characters of each line, any character beyond first 6 is discarded.
+// The instruction must be in the first 6 characters of each line, any character beyond the first 6 is discarded.
 // Therefore, each line must contain one of the following instructions,
 // where ttt means a 3-trit number with values from NNN (-13) to PPP (+13):
 // EX ttt
@@ -25,18 +29,16 @@ int pc = 0; // program counter
 // R2 ttt
 // R3 ttt
 // R4 ttt
-
-void load_program(const char *filename, vector<string> &instructions, vector<int> &arguments) {
     ifstream in;
-    in.open (filename, ifstream::in);
+    in.open(filename, ifstream::in);
     if (in.fail()) return;
     string line;
     while (!in.eof()) {
         getline(in, line);
         if (!line.length()) break;
         string sub = line.substr(0, 6);
-        assert(sub.length()==6); // the line is at least 6 characters long
 
+        assert(sub.length()==6); // the line must be at least 6 characters long
         assert(sub[2]==' ');     // the opcode is separated by a space from the argument
 
         vector<string> allowed_opcodes = {"EX", "JP", "SK", "OP", "RR", "R1", "R2", "R3", "R4"};
@@ -44,18 +46,20 @@ void load_program(const char *filename, vector<string> &instructions, vector<int
         bool ok = false;
         for (string &okcode : allowed_opcodes)
             if (opcode==okcode) ok = true;
-        assert(ok);              // is a valid opcode?
-        for (size_t i=3; i<6; i++)
-            assert(sub[i]=='N' || sub[i]=='O' || sub[i]=='P'); // is a valid 3-trit argument?
+        assert(ok);              // is it a valid opcode?
 
-        instructions.push_back(opcode);
-        int arg = 0;
+        for (size_t i=3; i<6; i++)
+            assert(sub[i]=='N' || sub[i]=='O' || sub[i]=='P'); // do we have a valid 3-trit argument?
+
+        int arg = 0; // convert the 3-trit string (e.g. "NPP") to an actual int value (-5)
         for (size_t i=0; i<3; i++) {
             int trit = sub[5-i]=='N' ? -1 : (sub[5-i]=='O' ? 0 : 1);
             int pwr = i==0 ? 1 : (i==1 ? 3 : 9);
             arg += pwr*trit;
         }
-        arguments.push_back(arg);
+
+        opcodes.push_back(opcode);
+        opargs.push_back(arg);
     }
 }
 
@@ -66,68 +70,77 @@ void display_memory() {
     }
     cout << " C   PC" << endl;
     for (int i=0; i<13; i++) {
-        cout << setw(3) << memory[i] << " ";
+        cout << setw(3) << R[i] << " ";
     }
-    cout << setw(2) << borrow_carry  << "  " << setw(4) << (pc-364) << endl << endl;
+    cout << setw(2) << C  << "  " << setw(4) << (PC-364) << endl << endl;
 }
 
-void execute(vector<string> &opcodes, vector<int> &args) {
+void execute(vector<string> &opcodes, vector<int> &opargs) {
     display_memory();
-    assert(opcodes.size()==args.size());
-    while (pc<(int)opcodes.size()) {
-        string oc = opcodes[pc];
-        int arg = args[pc];
-        if (string("EX") == oc) break;
-        if (string("R1") == oc) memory[0] = arg;
-        if (string("R2") == oc) memory[1] = arg;
-        if (string("R3") == oc) memory[2] = arg;
-        if (string("R4") == oc) memory[3] = arg;
-        if (string("OP") == oc) cerr << "NEEDS TO BE IMPLEMENTED" << endl;
-        if (string("RR") == oc && arg) {
+    assert(opcodes.size()==opargs.size());
+    while ((size_t)PC<opcodes.size()) {
+        string oc = opcodes[PC];
+        int arg = opargs[PC];
+        if (string("EX") == oc) break;      // halt and catch fire
+        if (string("R1") == oc) R[0] = arg;
+        if (string("R2") == oc) R[1] = arg;
+        if (string("R3") == oc) R[2] = arg;
+        if (string("R4") == oc) R[3] = arg;
+        if (string("OP") == oc) {
+            cerr << "NEEDS TO BE IMPLEMENTED" << endl;
+            assert(0);
+        }
+        if (string("RR") == oc && arg) { // "RR OOO" means "do nothing"
             if (abs(arg)==1) {
-                memory[0] += arg;
-                if (abs(memory[0])<=13) borrow_carry = 0;
-                else if (memory[0]> 13) { borrow_carry =  1; memory[0] -= 27; }
-                else if (memory[0]<-13) { borrow_carry = -1; memory[0] += 27; }
-            } else {
-                memory[arg<0 ? -arg-1 : 0] = memory[arg<0 ? 0 : arg-1];
+                R[0] += arg;
+                if (abs(R[0])<=13) C = 0;
+                else if (R[0]> 13) { C =  1; R[0] -= 27; }
+                else if (R[0]<-13) { C = -1; R[0] += 27; }
+            } else
+                R[arg<0 ? -arg-1 : 0] = R[arg<0 ? 0 : arg-1];
+        }
+        if (string("SK") == oc) {
+            if (abs(arg)>1) { // skip w.r.t R1-R4 values
+                int reg = R[(abs(arg)-2)/3]; // register value
+                int cmp = (abs(arg)-2)%3;    // comp operation
+                if (arg>0) {
+                    if (cmp==0 && reg <0) PC++;
+                    if (cmp==1 && reg==0) PC++;
+                    if (cmp==2 && reg >0) PC++;
+                } else {
+                    if (cmp==0 && reg<=0) PC++;
+                    if (cmp==1 && reg!=0) PC++;
+                    if (cmp==2 && reg>=0) PC++;
+                }
+            } else { // skip w.r.t C value
+                if (arg==-1 && C==-1) PC++;
+                if (arg== 0 && C== 0) PC++;
+                if (arg== 1 && C== 1) PC++;
             }
         }
-        if (string("JP") == oc) {
-            pc = (memory[12]*27 + arg)+364;
-        } else if (string("SK") == oc) {
-            if (arg==-1 && borrow_carry==-1) pc++;
-            if (arg== 0 && borrow_carry== 0) pc++;
-            if (arg== 1 && borrow_carry== 1) pc++;
-            if (abs(arg)>1) {
-                int R = memory[(abs(arg)-2)/3]; // register
-                int C = (abs(arg)-2)%3; // comparison
-                if (arg>0 && C==0 && R<0) pc++;
-                if (arg>0 && C==1 && R==0) pc++;
-                if (arg>0 && C==2 && R>0) pc++;
-                if (arg<0 && C==0 && R<=0) pc++;
-                if (arg<0 && C==1 && R!=0) pc++;
-                if (arg<0 && C==2 && R>=0) pc++;
-            }
-          pc++;
-        } else {
-            pc++;
-        }
+        PC++;
+        if (string("JP") == oc)
+            PC = (R[12]*27 + arg)+364;
         display_memory();
     }
 }
 
 int main(int argc, char** argv) {
     if (argc!=2) {
-        cerr << "Usage: " << argv[0] << " program.txt" << endl;
+        cerr << "Usage: " << argv[0] << " ../prog/add.txt" << endl;
         return 1;
     }
 
-    vector<string> instructions;
-    vector<int>    arguments;
-    load_program(argv[1], instructions, arguments);
+    // N.B. the memory is not guaranteed to be initialized!
+    std::srand(std::time(nullptr));
+    for (size_t i=0; i<13; i++) {
+        R[i] = std::rand()%27 - 13;
+    }
 
-    execute(instructions, arguments);
+    vector<string> opcodes;
+    vector<int>    opargs;
+    load_program(argv[1], opcodes, opargs);
+    execute(opcodes, opargs);
 
     return 0;
 }
