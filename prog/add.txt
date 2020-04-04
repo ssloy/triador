@@ -1,30 +1,18 @@
-#R13 initialized to -13 ; carry/borrow flag initialized to 0
-
-NNN NNN — write ttt to the register R2
-NNN NNO — write ttt to the register R3
-NNN NNP — write   0 to the register R4
-NNN NON — copy R3 to R1
-NNN NOO — skip if R2!=0
-NNN NOP — jump PPP                     # finished
-NNN PON — skip if R2>0
-NNN POO — R1--
-NNN POP — skip if R2<0
-NNN ONN — R1++
-NNN ONO — copy R1 to R3
-NNN ONP — skip if R4==0
-NNN OON — jump PNP                     # overflow already happened
-NNN OOO — skip if C==0
-NNN OOP — jump OPO                     # C!=0
-NNN OPN — jump PNP                     # C==0, no overflow
-NNN OPO — skip if C==1
-NNN OPP — write -1 to the register R4
-NNN PNN — skip if C==-1
-NNN PNO — write  1 to the register R4
-NNN PNP — copy R2 to R1
-NNN PON — skip if R2>0
-NNN POO — R1--
-NNN POP — skip if R2<0
-NNN PPN — R1++
-NNN PPO — jump NON
-NNN PPP — jump PPP
-
+R2 NPN # -7 -> R2          * this program computes R2+R3
+R3 PPP # 13 -> R3          * the result is stored in R3
+RR OPO # R3 -> R1
+SK NPO # skip if R2!=0
+JP OPP # R2==0, terminate
+SK PNP # skip if R2>0
+RR OON # R1--
+SK PNN # skip if R2<0
+RR OOP # R1++
+RR ONO # R1 -> R3
+RR OPN # R2 -> R1
+SK PNP # skip if R2>0
+RR OOP # R1++
+SK PNN # skip if R2<0
+RR OON # R1--
+RR ONP # R1 -> R2
+JP NNP
+EX PPP # HCF
