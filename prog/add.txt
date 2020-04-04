@@ -1,0 +1,30 @@
+#R13 initialized to -13 ; carry/borrow flag initialized to 0
+
+NNN NNN — write ttt to the register R2
+NNN NNO — write ttt to the register R3
+NNN NNP — write   0 to the register R4
+NNN NON — copy R3 to R1
+NNN NOO — skip if R2!=0
+NNN NOP — jump PPP                     # finished
+NNN PON — skip if R2>0
+NNN POO — R1--
+NNN POP — skip if R2<0
+NNN ONN — R1++
+NNN ONO — copy R1 to R3
+NNN ONP — skip if R4==0
+NNN OON — jump PNP                     # overflow already happened
+NNN OOO — skip if C==0
+NNN OOP — jump OPO                     # C!=0
+NNN OPN — jump PNP                     # C==0, no overflow
+NNN OPO — skip if C==1
+NNN OPP — write -1 to the register R4
+NNN PNN — skip if C==-1
+NNN PNO — write  1 to the register R4
+NNN PNP — copy R2 to R1
+NNN PON — skip if R2>0
+NNN POO — R1--
+NNN POP — skip if R2<0
+NNN PPN — R1++
+NNN PPO — jump NON
+NNN PPP — jump PPP
+
