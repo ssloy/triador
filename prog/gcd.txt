@@ -1,0 +1,51 @@
+R2 PPO # NNN NNN # write 12 to R2
+R3 NOP # NNN NNO # write -8 to R3
+RR OPN # NNN NNP # copy R2 to R1 <─────────────┐
+SK ONN # NNN NON # skip if R1>=0               │ ┌─────────────────────────────┐
+OP NOP # NNN NOO # R1 = -R1                    │ │ // This program computes    │
+RR ONP # NNN NOP # copy R1 to R2               │ │ // the greatest common      │
+RR OPO # NNN PON # copy R3 to R1               │ │ // divisor between R2       │
+SK ONP # NNN POO # skip if R1<=0               │ │ // and R3. The result is    │
+OP NOP # NNN POP # R1 = -R1                    │ │ // stored in R2.            │
+RR ONO # NNN ONN # copy R1 to R3               │ │ //                          │
+R1 NNO # NNN ONO #                             │ │ // A C++ world equivalent   │
+RR NNN # NNN ONP # choose segment NNO          │ │ // is listed below:         │
+JP NNN # NNN OON # subroutine call ────────┐   │ │                             │
+R1 NNN # NNN OOO # R4=R2+R3 <──────────────│─┐ │ │  int R2=-12, R3=8;          │
+RR NNN # NNN OOP # choose segment NNN      │ │ │ │  int R1, R4, R5;            │
+SK NNO # NNN OPN # skip if R4!=0           │ │ │ │                             │
+JP PPP # NNN OPO # terminate ────────────┐ │ │ │ │  // compute R4 = R3 + R2    │
+SK PPN # NNN OPP # skip if R4<0          │ │ │ │ │  // R1 and R5 are used      │
+JP POO # NNN PNN # ────────────────┐     │ │ │ │ │  void add_R2_R3() {         │
+RR OPP # NNN PNO # copy R4 to R1   │     │ │ │ │ │      R5 = R2;               │
+RR ONO # NNN PNP # copy R1 to R3   │     │ │ │ │ │      R4 = R3;               │
+JP PPN # NNN PON # jp outer loop ──│┐    │ │ │ │ │      while (R2!=0) {        │
+RR OPP # NNN POO # copy R4 to R1 <─┘│    │ │ │ │ │          R1 = R4;           │
+RR ONP # NNN POP # copy R1 to R2    │    │ │ │ │ │          if (R2>0) R1++;    │
+RR OOO # NNN PPN # do nothing <─────┘    │ │ │ │ │          if (R2<0) R1--;    │
+JP NNP # NNN PPO # outer loop ───────────│─│─│─┘ │          R4 = R1;           │
+EX PPP # NNN PPP # halt and catch fire <─┘ │ │   │          R1 = R2;           │
+RR OPN # NNO NNN # copy R2 to R1 <─────────┘ │   │          if (R2>0) R1--;    │
+RR NPP # NNO NNO # copy R1 to R5             │   │          if (R2<0) R1++;    │
+RR OPO # NNO NNP # copy R3 to R1             │   │          R2 = R1;           │
+RR ONN # NNO NON # copy R1 to R4             │   │      }                      │
+RR OPP # NNO NOO # copy R4 to R1 <───┐       │   │      R2 = R5;               │
+SK NPO # NNO NOP # skip if R2!=0     │       │   │  }                          │
+JP PNO # NNO PON # R2==0, terminate ─│─┐     │   │                             │
+SK PNP # NNO POO # skip if R2>0      │ │     │   │  int main() {               │
+RR OON # NNO POP # R1--              │ │     │   │      while (true) {         │
+SK PNN # NNO ONN # skip if R2<0      │ │     │   │          if (R2<0) R2=-R2;  │
+RR OOP # NNO ONO # R1++              │ │     │   │          if (R3>0) R3=-R3;  │
+RR ONN # NNO ONP # copy R1 to R4     │ │     │   │          add_R2_R3();       │
+RR OPN # NNO OON # copy R2 to R1     │ │     │   │          if (R4==0) break;  │
+SK PNP # NNO OOO # skip if R2>0      │ │     │   │          if (R4<0)          │
+RR OOP # NNO OOP # R1++              │ │     │   │              R3 = R4;       │
+SK PNN # NNO OPN # skip if R2<0      │ │     │   │          else               │
+RR OON # NNO OPO # R1--              │ │     │   │              R2 = R4;       │
+RR ONP # NNO OPP # copy R1 to R2     │ │     │   │      }                      │
+JP NOO # NNO PNN # loop ─────────────┘ │     │   │      return 0;              │
+RR PNN # NNO PNO # copy R5 to R1 <─────┘     │   │  }                          │
+RR ONP # NNO PNP # copy R1 to R2             │   │                             │
+R1 NNN # NNO PON #                           │   └─────────────────────────────┘
+RR NNN # NNO POO # choose segment NNN        │
+JP OOO # NNO POP # sub return, R4=R2+R3 ─────┘

@@ -152,8 +152,10 @@ void execute(const vector<string> &opcodes, const vector<int> &opargs) {
             }
         }
         PC++;
-        if (string("JP") == oc)
+        if (string("JP") == oc) {
             PC = (R[12]*27 + arg)+364;
+            assert(PC<opcodes.size());
+        }
         display_memory_state();
     }
 }
