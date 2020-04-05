@@ -1,5 +1,5 @@
-R1 NNN # NNN NNN #
-RR NNN # NNN NNO # initialize R13 with -13
+R1 NNN # NNN NNN # N.B. the memory is not guaranteed to be initialized
+RR NNN # NNN NNO # initialize R13 with -13, this chooses segment NNN for jumps
 R2 ONP # NNN NNP # write -2 to R2          * this program computes R2+R3
 R3 PPP # NNN NON # write 13 to R3          * the result is stored in R3
 RR OPO # NNN NOO # copy R3 to R1 <─┐
