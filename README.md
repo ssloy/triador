@@ -32,7 +32,8 @@ where ttt means a 3-trit number with values from NNN (-13) to PPP (+13):
 * R2 ttt
 * R3 ttt
 * R4 ttt
-The emulator drops the computer state for all steps.
+
+The emulator prints the complete state of the Triador computer for all steps. Note that in its current form any call for "EX ttt" means "halt and catch fire".
 
 # An example program
 
