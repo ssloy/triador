@@ -42,7 +42,7 @@ Here is [a very simple program](prog/add.txt) that writes two numbers to the reg
 ![](https://raw.githubusercontent.com/ssloy/triador/master/doc/add.png)
 
 The first column (6 first characters of each line) is the actual program.
-The second column is the instruction number; recall that any character beyond the first 6 is considered to be a comment,
+The second column (the one between two # symbols) is the instruction number. In the very beginning the program counter is initialized to NNN NNN. Recall that any character beyond the first 6 is considered to be a comment,
 thus the second column is solely there to better illustrate the jumps, it is ignored by the emulator.
 
 Here is an execution log:
