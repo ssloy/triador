@@ -1,39 +1,39 @@
 R1 NNN # NNN NNN # N.B. the memory is not guaranteed to be initialized
 RR NNN # NNN NNO # initialize R13 with -13, this chooses segment NNN for jumps
-R2 OPN # NNN NNP # write  2 to R2          * this program computes R2+R3
-R3 PPP # NNN NON # write 13 to R3          * the result is stored in R3+R4*27
-R4 OOO # NNN NOO # write  0 to R4
-RR OPO # NNN NOP # copy R3 to R1 <─────────┐
-SK NPO # NNN PON # skip if R2!=0           │
-JP PPP # NNN POO # R2==0, terminate ─────┐ │
-SK PNP # NNN POP # skip if R2>0          │ │
-RR OON # NNN ONN # R1--                  │ │
-SK PNN # NNN ONO # skip if R2<0          │ │
-RR OOP # NNN ONP # R1++                  │ │
-RR ONO # NNN OON # copy R1 to R3         │ │
-R1 NNO # NNN OOO #                       │ │
-RR NNN # NNN OOP # choose segment NNO    │ │
-JP NNN # NNN OPN # subroutine call ──────│─│───┐
-RR OPN # NNN OPO # copy R2 to R1         │ │   │<─┐
-SK PNP # NNN OPP # skip if R2>0          │ │   │  │
-RR OOP # NNN PNN # R1++                  │ │   │  │
-SK PNN # NNN PNO # skip if R2<0          │ │   │  │
-RR OON # NNN PNP # R1--                  │ │   │  │
-RR ONP # NNN PON # copy R1 to R2         │ │   │  │
-JP NOP # NNN POO # loop ─────────────────│─┘   │  │
-RR OOO # NNN POP # do nothing            │     │  │
-RR OOO # NNN PPN # do nothing            │     │  │
-RR OOO # NNN PPO # do nothing            │     │  │
-EX PPP # NNN PPP # halt and catch fire <─┘     │  │
-SK PPO # NNO NNN # skip if R4==0 <─────────────┘  │
-JP ONN # NNO NNO # already overflew ───────┐      │
-SK OOO # NNO NNP # skip if C==0            │      │
-JP NOP # NNO NON # C!=0 ──────────────┐    │      │
-JP ONN # NNO NOO # C==0, sub return ──│┐   │      │
-SK OOP # NNO NOP # skip if C==1 <─────┘│   │      │
-R4 OON # NNO PON # write -1 to R4      │   │      │
-SK OON # NNO POO # skip if C==-1       │   │      │
-R4 OOP # NNO POP # write 1 to R4       │   │      │
-R1 NNN # NNO ONN # <───────────────────┘<──┘      │
-RR NNN # NNO ONO # choose segment NNN             │
-JP OPO # NNO ONP # sub return ────────────────────┘
+R2 OPN # NNN NNP # write  2 to R2                        ┌─────────────────────────────────────┐
+R3 PPP # NNN NON # write 13 to R3                        │ // This program computes R2+R3,     │
+R4 OOO # NNN NOO # write  0 to R4                        │ // the result is stored as R3+R4*27.│
+RR OPO # NNN NOP # copy R3 to R1 <─────────┐             │ void hardware_overflow() {          │
+SK NPO # NNN PON # skip if R2!=0           │             │ // emulate hardware overflow        │
+JP PPP # NNN POO # R2==0, terminate ─────┐ │             │     C = 0;                          │
+SK PNP # NNN POP # skip if R2>0          │ │             │     if (R1>13) {                    │
+RR OON # NNN ONN # R1--                  │ │             │         R1 -= 27;                   │
+SK PNN # NNN ONO # skip if R2<0          │ │             │         C = 1;                      │
+RR OOP # NNN ONP # R1++                  │ │             │     }                               │
+RR ONO # NNN OON # copy R1 to R3         │ │             │     if (R1<-13) {                   │
+R1 NNO # NNN OOO #                       │ │             │         R1 += 27;                   │
+RR NNN # NNN OOP # choose segment NNO    │ │             │         C = -1;                     │
+JP NNN # NNN OPN # subroutine call ──────│─│───┐         │     }                               │
+RR OPN # NNN OPO # copy R2 to R1         │ │   │<─┐      │ }                                   │
+SK PNP # NNN OPP # skip if R2>0          │ │   │  │      │ void handle_overflow() {            │
+RR OOP # NNN PNN # R1++                  │ │   │  │      │     if (R4 || !C) return;           │
+SK PNN # NNN PNO # skip if R2<0          │ │   │  │      │     if (C== 1) R4 =  1;             │
+RR OON # NNN PNP # R1--                  │ │   │  │      │     if (C==-1) R4 = -1;             │
+RR ONP # NNN PON # copy R1 to R2         │ │   │  │      │ }                                   │
+JP NOP # NNN POO # loop ─────────────────│─┘   │  │      │ int main() {                        │
+RR OOO # NNN POP # do nothing            │     │  │      │     while (R2!=0) {                 │
+RR OOO # NNN PPN # do nothing            │     │  │      │         R1 = R3;                    │
+RR OOO # NNN PPO # do nothing            │     │  │      │         if (R2>0) R1++;             │
+EX PPP # NNN PPP # halt and catch fire <─┘     │  │      │         if (R2<0) R1--;             │
+SK PPO # NNO NNN # skip if R4==0 <─────────────┘  │      │         hardware_overflow();        │
+JP ONN # NNO NNO # already overflew ───────┐      │      │         handle_overflow();          │
+SK OOO # NNO NNP # skip if C==0            │      │      │         R3 = R1;                    │
+JP NOP # NNO NON # C!=0 ──────────────┐    │      │      │         R1 = R2;                    │
+JP ONN # NNO NOO # C==0, sub return ──│┐   │      │      │         if (R2>0) R1--;             │
+SK OOP # NNO NOP # skip if C==1 <─────┘│   │      │      │         if (R2<0) R1++;             │
+R4 OON # NNO PON # write -1 to R4      │   │      │      │         hardware_overflow();        │
+SK OON # NNO POO # skip if C==-1       │   │      │      │         R2 = R1;                    │
+R4 OOP # NNO POP # write 1 to R4       │   │      │      │     }                               │
+R1 NNN # NNO ONN # <───────────────────┘<──┘      │      │     return 0;                       │
+RR NNN # NNO ONO # choose segment NNN             │      │ }                                   │
+JP OPO # NNO ONP # sub return ────────────────────┘      └─────────────────────────────────────┘
