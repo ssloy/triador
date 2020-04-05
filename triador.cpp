@@ -15,6 +15,22 @@ vector<int> R = {0,0,0,0,0,0,0,0,0,0,0,0,0}; // 13 registers, valid range for ea
 int  C = 0;                                  // borrow-carry flag, valid values -1,0,+1
 int PC = 0;                                  // program counter, valid range -364..+364
 
+void display_memory_state() {
+    for (int i=0; i<13; i++)
+        assert(abs(R[i])<=13);
+    assert(abs(C)<=1);
+    assert(abs(PC)<364);
+
+    for (int i=0; i<13; i++) {
+        if (i<9) cout << " ";
+        cout << "R" << (i+1) << " ";
+    }
+    cout << " C   PC" << endl;
+    for (int i=0; i<13; i++)
+        cout << setw(3) << R[i] << " ";
+    cout << setw(2) << C  << "  " << setw(4) << (PC-364) << endl << endl;
+}
+
 void load_program(const char *filename, vector<string> &opcodes, vector<int> &opargs) {
 // The program file must contain a single instruction per line.
 // The instruction must be in the first 6 characters of each line, any character beyond the first 6 is discarded.
@@ -63,20 +79,31 @@ void load_program(const char *filename, vector<string> &opcodes, vector<int> &op
     }
 }
 
-void display_memory() {
-    for (int i=0; i<13; i++) {
-        if (i<9) cout << " ";
-        cout << "R" << (i+1) << " ";
+// compute ttt[3] such that value = ttt[0] + 3*ttt[1] + 9*ttt[2]
+void decompose(const int value, int ttt[3]) {
+    assert(abs(value)<=13);
+    int n = value;
+    bool neg = n < 0;
+    if (neg) n = -n;
+
+    for (int i=0; i<3; i++) {
+        int r = n % 3; // remainder operator over negative values is implementation-defined, thus bool neg
+        if (r == 0)
+            ttt[i] = 0;
+        else if (r == 1)
+            ttt[i] = 1;
+        else {
+            ttt[i] = -1;
+            n++;
+        }
+        n /= 3;
     }
-    cout << " C   PC" << endl;
-    for (int i=0; i<13; i++) {
-        cout << setw(3) << R[i] << " ";
-    }
-    cout << setw(2) << C  << "  " << setw(4) << (PC-364) << endl << endl;
+    if (neg) for (int i=0; i<3; i++)
+        ttt[i] = -ttt[i];
 }
 
-void execute(vector<string> &opcodes, vector<int> &opargs) {
-    display_memory();
+void execute(const vector<string> &opcodes, const vector<int> &opargs) {
+    display_memory_state();
     assert(opcodes.size()==opargs.size());
     while ((size_t)PC<opcodes.size()) {
         string oc = opcodes[PC];
@@ -87,8 +114,14 @@ void execute(vector<string> &opcodes, vector<int> &opargs) {
         if (string("R3") == oc) R[2] = arg;
         if (string("R4") == oc) R[3] = arg;
         if (string("OP") == oc) {
-            cerr << "NEEDS TO BE IMPLEMENTED" << endl;
-            assert(0);
+            int ttt_mem[3] = {0,0,0};
+            int ttt_arg[3] = {0,0,0};
+            int ttt_res[3] = {0,0,0};
+            decompose(R[0], ttt_mem);
+            decompose(arg,  ttt_arg);
+            for (int i=0; i<3; i++)
+                ttt_res[i] = ttt_arg[ttt_mem[i]+1];
+            R[0] = ttt_res[0] + 3*ttt_res[1] + 9*ttt_res[2];
         }
         if (string("RR") == oc && arg) { // "RR OOO" means "do nothing"
             if (abs(arg)==1) {
@@ -121,7 +154,7 @@ void execute(vector<string> &opcodes, vector<int> &opargs) {
         PC++;
         if (string("JP") == oc)
             PC = (R[12]*27 + arg)+364;
-        display_memory();
+        display_memory_state();
     }
 }
 
@@ -133,9 +166,8 @@ int main(int argc, char** argv) {
 
     // N.B. the memory is not guaranteed to be initialized!
     std::srand(std::time(nullptr));
-    for (size_t i=0; i<13; i++) {
+    for (size_t i=0; i<13; i++)
         R[i] = std::rand()%27 - 13;
-    }
 
     vector<string> opcodes;
     vector<int>    opargs;
