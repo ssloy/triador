@@ -47,4 +47,4 @@ $ ./triador ../prog/add.txt | tail -n 3
  R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
  11   0  11   5   0   6 -12  -2  11   8  11 -10 -13  0  -345
 ```
-Note that R3 contains the result of -2 + 11.
+Note that R3 contains the result of -2 + 13.
