@@ -41,7 +41,11 @@ Here is [a very simple program](prog/add.txt) that writes two numbers to the reg
 
 ![](https://raw.githubusercontent.com/ssloy/triador/master/doc/add.png)
 
-Here is the execution log:
+The first column (6 first characters of each line) is the actual program.
+The second column is the instruction number; recall that any character beyond the first 6 is considered to be a comment,
+thus the second column is solely there to better illustrate the jumps, it is ignored by the emulator.
+
+Here is an execution log:
 ```
 $ ./triador ../prog/add.txt | tail -n 3
  R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
