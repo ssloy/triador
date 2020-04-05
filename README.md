@@ -1,4 +1,4 @@
-# Ternary computer program emulator
+# The ultimate goal: a ternary computer
 
 Many claimed to build a ternary computer, however nobody (to the best of my knowledge) completed the project. Triador project makes no empty promises!
 
@@ -6,9 +6,12 @@ I am building a very simple but functional 3-trit balanced ternary computer. The
 
 [![](doc/memory-board.jpg)](https://www.youtube.com/playlist?list=PL9MBW6e0V7UIvP2vY_aKwsu93wqYq5jXJ)
 
-This repository contains a program emulator that eases the debugging of the hardware.
+# Instruction set
+This repository contains a program emulator that eases the debugging of the hardware. Triador has the following instruction set:
 
-# compile and execute a sample program
+![](doc/triador_instruction_set.png)
+
+# Compilation / execution
 ```sh
 git clone https://github.com/ssloy/triador.git
 cd triador
@@ -18,111 +21,30 @@ cmake ..
 make
 ./triador ../prog/add.txt
 ```
+The program file must contain a single instruction per line. The instruction must be in the first 6 characters of each line, any character beyond the first 6 is discarded. Therefore, each line must contain one of the following instructions,
+where ttt means a 3-trit number with values from NNN (-13) to PPP (+13):
+* EX ttt
+* JP ttt
+* SK ttt
+* OP ttt
+* RR ttt
+* R1 ttt
+* R2 ttt
+* R3 ttt
+* R4 ttt
 
-This executes [a very simple program](prog/add.txt) that writes two numbers to the registers R2 and R3 and computes their sum.
-The result is stored in R3.
-The emulator drops the computer state for all steps.
+The emulator prints the complete state of the Triador computer for all steps. Note that in its current form any call for "EX ttt" means "halt and catch fire".
+
+# An example program
+
+Here is [a very simple program](prog/add.txt) that writes two numbers to the registers R2 and R3 and computes their sum. The result is stored in R3:
+
+![](https://raw.githubusercontent.com/ssloy/triador/master/doc/add.png)
 
 Here is the execution log:
 ```
-$ ./triador ../prog/add.txt
+$ ./triador ../prog/add.txt | tail -n 3
  R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
-  0   0   0   0   0   0   0   0   0   0   0   0   0  0  -364
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
--13   0   0   0   0   0   0   0   0   0   0   0   0  0  -363
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
--13   0   0   0   0   0   0   0   0   0   0   0 -13  0  -362
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
--13  -2   0   0   0   0   0   0   0   0   0   0 -13  0  -361
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
--13  -2  13   0   0   0   0   0   0   0   0   0 -13  0  -360
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- 13  -2  13   0   0   0   0   0   0   0   0   0 -13  0  -359
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- 13  -2  13   0   0   0   0   0   0   0   0   0 -13  0  -357
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- 13  -2  13   0   0   0   0   0   0   0   0   0 -13  0  -356
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- 12  -2  13   0   0   0   0   0   0   0   0   0 -13  0  -355
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- 12  -2  13   0   0   0   0   0   0   0   0   0 -13  0  -353
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- 12  -2  12   0   0   0   0   0   0   0   0   0 -13  0  -352
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- -2  -2  12   0   0   0   0   0   0   0   0   0 -13  0  -351
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- -2  -2  12   0   0   0   0   0   0   0   0   0 -13  0  -350
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- -1  -2  12   0   0   0   0   0   0   0   0   0 -13  0  -349
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- -1  -2  12   0   0   0   0   0   0   0   0   0 -13  0  -347
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- -1  -1  12   0   0   0   0   0   0   0   0   0 -13  0  -346
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- -1  -1  12   0   0   0   0   0   0   0   0   0 -13  0  -360
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- 12  -1  12   0   0   0   0   0   0   0   0   0 -13  0  -359
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- 12  -1  12   0   0   0   0   0   0   0   0   0 -13  0  -357
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- 12  -1  12   0   0   0   0   0   0   0   0   0 -13  0  -356
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- 11  -1  12   0   0   0   0   0   0   0   0   0 -13  0  -355
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- 11  -1  12   0   0   0   0   0   0   0   0   0 -13  0  -353
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- 11  -1  11   0   0   0   0   0   0   0   0   0 -13  0  -352
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- -1  -1  11   0   0   0   0   0   0   0   0   0 -13  0  -351
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- -1  -1  11   0   0   0   0   0   0   0   0   0 -13  0  -350
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
-  0  -1  11   0   0   0   0   0   0   0   0   0 -13  0  -349
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
-  0  -1  11   0   0   0   0   0   0   0   0   0 -13  0  -347
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
-  0   0  11   0   0   0   0   0   0   0   0   0 -13  0  -346
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
-  0   0  11   0   0   0   0   0   0   0   0   0 -13  0  -360
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- 11   0  11   0   0   0   0   0   0   0   0   0 -13  0  -359
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- 11   0  11   0   0   0   0   0   0   0   0   0 -13  0  -358
-
- R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
- 11   0  11   0   0   0   0   0   0   0   0   0 -13  0  -345
+ 11   0  11   5   0   6 -12  -2  11   8  11 -10 -13  0  -345
 ```
-
-Triador has the following instruction set:
-
-![](doc/triador_instruction_set.png)
+Note that R3 contains the result of -2 + 13.
