@@ -1,39 +1,27 @@
-R1 NNN # NNN NNN # N.B. the memory is not guaranteed to be initialized
-RR NNN # NNN NNO # initialize R13 with -13, this chooses segment NNN for jumps
-R2 OPN # NNN NNP # write  2 to R2                        ┌─────────────────────────────────────┐
-R3 PPP # NNN NON # write 13 to R3                        │ // This program computes R2+R3,     │
-R4 OOO # NNN NOO # write  0 to R4                        │ // the result is stored as R3+R4*27.│
-RR OPO # NNN NOP # copy R3 to R1 <─────────┐             │ int C, R1, R2, R3, R4;              │
-SK NPO # NNN PON # skip if R2!=0           │             │ // hardware behavior emulation      │
-JP PPP # NNN POO # R2==0, terminate ─────┐ │             │ void overflow() {                   │
-SK PNP # NNN POP # skip if R2>0          │ │             │     C = R1>13?1:(R1<-13?-1:0);      │
-RR OON # NNN ONN # R1--                  │ │             │     if (R1> 13) R1 -= 27;           │
-SK PNN # NNN ONO # skip if R2<0          │ │             │     if (R1<-13) R1 += 27;           │
-RR OOP # NNN ONP # R1++                  │ │             │ }                                   │
-RR ONO # NNN OON # copy R1 to R3         │ │             │                                     │
-R1 NNO # NNN OOO #                       │ │             │ // actual program equivalent        │
-RR NNN # NNN OOP # choose segment NNO    │ │             │ void handle_overflow() {            │
-JP NNN # NNN OPN # subroutine call ──────│─│───┐         │     if (R4 || !C) return;           │
-RR OPN # NNN OPO # copy R2 to R1         │ │   │<─┐      │     if (C== 1) R4 =  1;             │
-SK PNP # NNN OPP # skip if R2>0          │ │   │  │      │     if (C==-1) R4 = -1;             │
-RR OOP # NNN PNN # R1++                  │ │   │  │      │ }                                   │
-SK PNN # NNN PNO # skip if R2<0          │ │   │  │      │ int main() {                        │
-RR OON # NNN PNP # R1--                  │ │   │  │      │     R2 = 2;                         │
-RR ONP # NNN PON # copy R1 to R2         │ │   │  │      │     R3 = 13;                        │
-JP NOP # NNN POO # loop ─────────────────│─┘   │  │      │     R4 = 0;                         │
-RR OOO # NNN POP # do nothing            │     │  │      │     while (R2!=0) {                 │
-RR OOO # NNN PPN # do nothing            │     │  │      │         R1 = R3;                    │
-RR OOO # NNN PPO # do nothing            │     │  │      │         if (R2>0) R1++;             │
-EX PPP # NNN PPP # halt and catch fire <─┘     │  │      │         if (R2<0) R1--;             │
-SK PPO # NNO NNN # skip if R4==0 <─────────────┘  │      │         overflow();                 │
-JP ONN # NNO NNO # already overflew ───────┐      │      │         handle_overflow();          │
-SK OOO # NNO NNP # skip if C==0            │      │      │         R3 = R1;                    │
-JP NOP # NNO NON # C!=0 ──────────────┐    │      │      │         R1 = R2;                    │
-JP ONN # NNO NOO # C==0, sub return ──│┐   │      │      │         if (R2>0) R1--;             │
-SK OOP # NNO NOP # skip if C==1 <─────┘│   │      │      │         if (R2<0) R1++;             │
-R4 OON # NNO PON # write -1 to R4      │   │      │      │         overflow();                 │
-SK OON # NNO POO # skip if C==-1       │   │      │      │         R2 = R1;                    │
-R4 OOP # NNO POP # write 1 to R4       │   │      │      │     }                               │
-R1 NNN # NNO ONN # <───────────────────┘<──┘      │      │     return 0;                       │
-RR NNN # NNO ONO # choose segment NNN             │      │ }                                   │
-JP OPO # NNO ONP # sub return ────────────────────┘      └─────────────────────────────────────┘
+R2 OPN # write  2 to R2                                               ┌─────────────────────────────────┐
+R3 PPP # write 13 to R3           ┌─────────────────────────────────┐ │ int C, R1, R2=2, R3=13, R4=0;   │
+R4 OOO # write  0 to R4           │ This program computes R2+R3,    │ │ void hardware_overflow() {      │
+R1 NNN #                          │ the result is stored as R3+R4*27│ │     C = R1>13?1:(R1<-13?-1:0);  │
+RR NNN # choose segment NNN       │ Side effects: R2, R1 and C      │ │     if (R1> 13) R1 -= 27;       │
+RR OPO # copy R3 to R1 <─────┐    │ are destroyed.                  │ │     if (R1<-13) R1 += 27;       │
+SK NPO # skip if R2!=0       │    │                                 │ │ }                               │
+JP PPP # break the loop ─────│─┐  │ Here is a C++ world equavalent ──>│ int main() {                    │
+SK PNP # skip if R2>0        │ │  └─────────────────────────────────┘ │     while (R2!=0) {             │
+RR OON # R1--                │ │                                      │         R1=R3;                  │
+SK PNN # skip if R2<0        │ │                                      │         if (R2>0) R1++;         │
+RR OOP # R1++                │ │                                      │         if (R2<0) R1--;         │
+RR ONO # copy R1 to R3       │ │                                      │         hardware_overflow();    │
+SK OOO # skip if C==0        │ │                                      │         R3 = R1;                │
+JP OPO # overflow ───────┐   │ │                                      │         if (C) {                │
+JP PNO # no overflow ────│─┐ │ │                                      │             R4 = 1;             │
+R4 OOP # write 1 to R4 <─┘ │ │ │                                      │             if (C==-1) R4 = -1; │
+SK OOP # skip if C==1      │ │ │                                      │         }                       │
+R4 OON # write -1 to R4    │ │ │                                      │         R1 = R2;                │
+RR OPN # copy R2 to R1 <───┘ │ │                                      │         if (R2>0) R1--;         │
+SK PNP # skip if R2>0        │ │                                      │         if (R2<0) R1++;         │
+RR OOP # R1++                │ │                                      │         hardware_overflow();    │
+SK PNN # skip if R2<0        │ │                                      │         R2 = R1;                │
+RR OON # R1--                │ │                                      │     }                           │
+RR ONP # copy R1 to R2       │ │                                      │     return R3+27*R4;            │
+JP NOP # main loop ──────────┘ │                                      │ }                               │
+EX PPP # halt and catch fire <─┘                                      └─────────────────────────────────┘
