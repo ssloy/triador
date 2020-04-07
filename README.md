@@ -35,8 +35,8 @@ where ttt means a 3-trit number with values from NNN (-13) to PPP (+13):
 
 The emulator prints the complete state of the Triador computer for all steps. Note that in its current form any call for "EX ttt" means "halt and catch fire".
 
-# An example program
-
+# example programs
+## Add
 Here is [a very simple program](prog/add.txt) that writes two numbers to the registers R2 and R3 and computes their sum. The result is stored in R3:
 
 ![](https://raw.githubusercontent.com/ssloy/triador/master/doc/add.png)
@@ -50,3 +50,15 @@ $ ./triador ../prog/add.txt | tail -n 3
  11   0  11   5   0   6 -12  -2  11   8  11 -10 -13  0  -345
 ```
 Note that R3 contains the result of -2 + 13.
+
+## Add with overflow control
+
+![](https://raw.githubusercontent.com/ssloy/triador/master/doc/add-with-overflow-control.png)
+
+## 6-trit addition
+
+![](https://raw.githubusercontent.com/ssloy/triador/master/doc/long-add.png)
+
+## Greatest common divisor
+
+![](https://raw.githubusercontent.com/ssloy/triador/master/doc/gcd.png)
