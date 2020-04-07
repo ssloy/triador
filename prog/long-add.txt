@@ -1,0 +1,58 @@
+R1 PNP # write  +7 to R1
+R2 PPO # write +12 to R2 (R1+R2*27 = +331)        ┌───────────────────────────────────────────────────────┐
+R3 NNN # write -13 to R3                          │   // This program adds (R1+R2*27) and (R3+R4*R27),    │
+R4 NOO # write  -9 to R4 (R3+R4*27 = -256)        │   // the result is saved as (R4+R5*27).               │
+RR NPP # copy R1 to R5                            │   // Side effects: all memory except R9-R12 is used.  │
+RR OPO # copy R3 to R1                            │   // Check the C++ equivalent:                        │
+RR NPO # copy R1 to R6                            │                                                       │
+R1 OOO #                                          │   int C, R1=7, R2=12, R3=-13, R4=-9, R5, R6, R7, R8;  │
+RR NPN # write 0 to R7 (add sub return address)   │                                                       │
+R1 NNO #                                          │   void hardware_overflow() {                          │
+RR NNN # choose segment NNP                       │       C = R1>13?1:(R1<-13?-1:0);                      │
+JP NON # subroutine call ───────┐                 │       if (R1> 13) R1 -= 27;                           │
+R1 OOP # <──────────────────────│──┐              │       if (R1<-13) R1 += 27;                           │
+RR NPN # write 1 to R7          │  │              │   }                                                   │
+RR OPP # copy R4 to R1          │  │              │                                                       │
+RR NOP # copy R1 to R8          │  │              │   // compute R2+R4, store the result as R3*27+R4      │
+RR PNN # copy R5 to R1          │  │              │   void add() {                                        │
+RR ONP # copy R1 to R2          │  │              │       R3 = 0;                                         │
+RR PNO # copy R6 to R1          │  │              │       while (R2!=0) {                                 │
+RR ONN # copy R1 to R4          │  │              │           R1=R4;                                      │
+R1 NNO #                        │  │              │           if (R2>0) R1++;                             │
+RR NNN # choose segment NNP     │  │              │           if (R2<0) R1--;                             │
+JP NON # subroutine call ────┐  │  │              │           hardware_overflow();                        │
+RR PON # copy R8 to R1 <─────│──│──│──┐           │           R4 = R1;                                    │
+SK NOP # skip if R3<=0       │  │  │  │           │           if (C) {                                    │
+RR OOP # R1++                │  │  │  │           │               R3 = 1;                                 │
+SK NON # skip if R3>=0       │  │  │  │           │               if (C==-1) R3 = -1;                     │
+RR OON # R1--                │  │  │  │           │           }                                           │
+RR NPP # copy R1 to R5       │  │  │  │           │           R1 = R2;                                    │
+EX PPP # halt and catch fire │  │  │  │           │           if (R2>0) R1--;                             │
+R3 OOO # write 0 to R3 <─────┘<─┘  │  │           │           if (R2<0) R1++;                             │
+RR OPP # copy R4 to R1 <─────┐     │  │           │           hardware_overflow();                        │
+SK NPO # skip if R2!=0       │     │  │           │           R2 = R1;                                    │
+JP PPO # break the loop ─────│──┐  │  │           │       }                                               │
+SK PNP # skip if R2>0        │  │  │  │           │   }                                                   │
+RR OON # R1--                │  │  │  │           │                                                       │
+SK PNN # skip if R2<0        │  │  │  │           │   int main() {                                        │
+RR OOP # R1++                │  │  │  │           │       R5 = R1; // save the lower half-word            │
+RR ONN # copy R1 to R4       │  │  │  │           │       R6 = R3;                                        │
+SK OOO # skip if C==0        │  │  │  │           │       R7 = 0;                                         │
+JP OPN # overflow ──────┐    │  │  │  │           │       // N.B. no stack in Triador, here               │
+JP PNN # no overflow ───│─┐  │  │  │  │           │       // the return address is controlled via R7      │
+R3 OOP # write 1 to R3 <┘ │  │  │  │  │           │       add();                                          │
+SK OOP # skip if C==1     │  │  │  │  │           │       R7 = 1;                                         │
+R3 OON # write -1 to R3   │  │  │  │  │           │       R8 = R4; // save the first result               │
+RR OPN # copy R2 to R1 <──┘  │  │  │  │           │       R2 = R5; // copy the lower half-word            │
+SK PNP # skip if R2>0        │  │  │  │           │       R4 = R6;                                        │
+RR OOP # R1++                │  │  │  │           │       add();                                          │
+SK PNN # skip if R2<0        │  │  │  │           │       R1 = R8;                                        │
+RR OON # R1--                │  │  │  │           │       if (R3>0) R1++;                                 │
+RR ONP # copy R1 to R2       │  │  │  │           │       if (R3<0) R1--;                                 │
+JP NOO # main loop ──────────┘  │  │  │           │       R5 = R1;                                        │
+R1 NNN # <──────────────────────┘  │  │           │       return R4+27*R5;                                │
+RR NNN # choose segment NNN        │  │           │   }                                                   │
+RR PNP # copy R7 to R1             │  │           └───────────────────────────────────────────────────────┘
+SK ONO # skip if R1!=0             │  │
+JP OON # sub return 1 ─────────────┘  │
+JP POP # sub return 2 ────────────────┘
