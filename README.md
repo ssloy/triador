@@ -53,7 +53,7 @@ Note that R3 contains the result of -2 + 13.
 
 ## Add with overflow control
 
-![](https://raw.githubusercontent.com/ssloy/triador/master/doc/add.png)
+![](https://raw.githubusercontent.com/ssloy/triador/master/doc/add-with-overflow-control.png)
 
 ## 6-trit addition
 
