@@ -1,0 +1,10 @@
+image:
+  file: Dockerfile
+tasks:
+- command: >
+    mkdir --parents build &&
+    cd build &&
+    cmake .. &&
+    make &&
+    ./triador ../prog/add.txt &&
+    cd ..
