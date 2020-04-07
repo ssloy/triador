@@ -8,9 +8,9 @@ RR NPO # copy R1 to R6                            │                           
 R1 OOO #                                          │   int C, R1=7, R2=12, R3=-13, R4=-9, R5, R6, R7, R8;  │
 RR NPN # write 0 to R7 (add sub return address)   │                                                       │
 R1 NNO #                                          │   void hardware_overflow() {                          │
-RR NNN # choose segment NNP                       │       C = R1>13?1:(R1<-13?-1:0);                      │
+RR NNN # choose segment NNO                       │       C = R1>13?1:(R1<-13?-1:0);                      │
 JP NON # subroutine call ───────┐                 │       if (R1> 13) R1 -= 27;                           │
-R1 OOP # <──────────────────────│──┐              │       if (R1<-13) R1 += 27;                           │
+R1 OOP # <──R7==0, return here──│──┐              │       if (R1<-13) R1 += 27;                           │
 RR NPN # write 1 to R7          │  │              │   }                                                   │
 RR OPP # copy R4 to R1          │  │              │                                                       │
 RR NOP # copy R1 to R8          │  │              │   // compute R2+R4, store the result as R3*27+R4      │
@@ -19,7 +19,7 @@ RR ONP # copy R1 to R2          │  │              │       R3 = 0;         
 RR PNO # copy R6 to R1          │  │              │       while (R2!=0) {                                 │
 RR ONN # copy R1 to R4          │  │              │           R1=R4;                                      │
 R1 NNO #                        │  │              │           if (R2>0) R1++;                             │
-RR NNN # choose segment NNP     │  │              │           if (R2<0) R1--;                             │
+RR NNN # choose segment NNO     │  │              │           if (R2<0) R1--;                             │
 JP NON # subroutine call ────┐  │  │              │           hardware_overflow();                        │
 RR PON # copy R8 to R1 <─────│──│──│──┐           │           R4 = R1;                                    │
 SK NOP # skip if R3<=0       │  │  │  │           │           if (C) {                                    │
