@@ -6,10 +6,14 @@ I am building a very simple but functional 3-trit balanced ternary computer. The
 
 [![](doc/memory-board.jpg)](https://www.youtube.com/playlist?list=PL9MBW6e0V7UIvP2vY_aKwsu93wqYq5jXJ)
 
-# Instruction set
-This repository contains a program emulator that eases the debugging of the hardware. Triador has the following instruction set:
+# Computer description / instruction set
+This repository contains a program emulator that eases the debugging of the hardware. Triador has a 3-trit architecture, this means that its registers can store numbers from -13 to +13. It has four main registers R1-R4 and nine extra registers R5-R13. Note that R13 is a special register used to choose current program memory segment (more on this below). So, in total, Triador can store 13 numbers from the [-13..+13] range. In addition to that, it has a 1-trit borrow/carry flag and a 6-trit program counter register. The read-only program memory has 27 segments, 27 instructions per segment. So, max program size is 729 instructions. Here is a graphic description:
 
-![](doc/triador_instruction_set.png)
+![](doc/triador-description.png)
+
+Triador has the a very limited instruction set. It has 9 instructions; each instruction has a mandatory 3-trit argument. Note that the extension instruction at the moment is interpreted as [halt and catch fire](https://en.wikipedia.org/wiki/Halt_and_Catch_Fire_(computing)). Here is the complete list of available instructions:
+
+![](doc/triador-instructions.png)
 
 # Compilation / execution
 ```sh
