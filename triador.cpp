@@ -109,11 +109,11 @@ void execute(const vector<string> &opcodes, const vector<int> &opargs) {
         string oc = opcodes[PC];
         int arg = opargs[PC];
         if (string("EX") == oc) break;      // halt and catch fire
-        if (string("R1") == oc) R[0] = arg;
+        if (string("R1") == oc) R[0] = arg; // direct write the the main registers
         if (string("R2") == oc) R[1] = arg;
         if (string("R3") == oc) R[2] = arg;
         if (string("R4") == oc) R[3] = arg;
-        if (string("OP") == oc) {
+        if (string("OP") == oc) { // unary tritwise operation
             int ttt_mem[3] = {0,0,0};
             int ttt_arg[3] = {0,0,0};
             int ttt_res[3] = {0,0,0};
@@ -124,15 +124,15 @@ void execute(const vector<string> &opcodes, const vector<int> &opargs) {
             R[0] = ttt_res[0] + 3*ttt_res[1] + 9*ttt_res[2];
         }
         if (string("RR") == oc && arg) { // "RR OOO" means "do nothing"
-            if (abs(arg)==1) {
+            if (abs(arg)==1) { // RR with -1 or +1 argument is an increment/decrement
                 R[0] += arg;
                 if (abs(R[0])<=13) C = 0;
-                else if (R[0]> 13) { C =  1; R[0] -= 27; }
-                else if (R[0]<-13) { C = -1; R[0] += 27; }
+                else if (R[0]> 13) { C =  1; R[0] -= 27; } // emulate the overflow
+                else if (R[0]<-13) { C = -1; R[0] += 27; } // and set the borrow/carry flag
             } else
-                R[arg<0 ? -arg-1 : 0] = R[arg<0 ? 0 : arg-1];
+                R[arg<0 ? -arg-1 : 0] = R[arg<0 ? 0 : arg-1]; // RR with argument >1 or <-1 is a copy
         }
-        if (string("SK") == oc) {
+        if (string("SK") == oc) { // conditional skips of the next operation
             if (abs(arg)>1) { // skip w.r.t R1-R4 values
                 int reg = R[(abs(arg)-2)/3]; // register value
                 int cmp = (abs(arg)-2)%3;    // comp operation
@@ -151,8 +151,8 @@ void execute(const vector<string> &opcodes, const vector<int> &opargs) {
                 if (arg== 1 && C== 1) PC++;
             }
         }
-        PC++;
-        if (string("JP") == oc) {
+        PC++; // advance the program counter
+        if (string("JP") == oc) { // jump instruction
             PC = (R[12]*27 + arg)+364;
             assert((size_t)PC<opcodes.size());
         }
