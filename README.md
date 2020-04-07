@@ -29,6 +29,12 @@ make
 ./triador ../prog/add.txt
 ```
 
+You can open the project in Gitpod, a free online dev evironment for GitHub:
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/ssloy/triador)
+
+On open, the editor will compile & run the program. Just change the code in the editor and rerun the script (use the terminal's history).
+
 # Program file specifications
 The program file must contain a single instruction per line. The instruction must be in the first 6 characters of each line, any character beyond the first 6 is discarded. Therefore, each line must contain one of the following instructions,
 where ttt means a 3-trit number with values from NNN (-13) to PPP (+13):
