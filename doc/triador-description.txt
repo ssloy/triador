@@ -1,0 +1,46 @@
+ ═══════════════════════════════════════════════════════════
+        Description of the ternary computer TRIADOR
+ ═══════════════════════════════════════════════════════════
+  General purpose
+     registers
+ trits 2 1 0  (a trit can take -1,0,+1 values)
+      ┌─┬─┬─┐
+    R1│ │ │ │ \
+      ├─┼─┼─┤ |                              Program memory
+    R2│ │ │ │ |                            trits 4 3 2 1 0
+      ├─┼─┼─┤ >-- the main set                  ┌─┬─┬─┬─┬─┐
+    R3│ │ │ │ |   of registers           a  -364│ │ │ │ │ │
+      ├─┼─┼─┤ |                          d      ├─┼─┼─┼─┼─┤
+    R4│ │ │ │ /                          d  -363│ │ │ │ │ │
+      ├─┼─┼─┤                            r      ├─┼─┼─┼─┼─┤
+    R5│ │ │ │ \                          e  -362│ │ │ │ │ │
+      ├─┼─┼─┤ |                          s      ├─┼─┼─┼─┼─┤
+    R6│ │ │ │ |                          s      : : : : : :
+      ├─┼─┼─┤ |                                 ├─┼─┼─┼─┼─┤
+    R7│ │ │ │ |                              -1 │ │ │ │ │ │
+      ├─┼─┼─┤ |                                 ├─┼─┼─┼─┼─┤
+    R8│ │ │ │ |                               0 │ │ │ │ │ │
+      ├─┼─┼─┤ >-- extra registers               ├─┼─┼─┼─┼─┤
+    R9│ │ │ │ |                              +1 │ │ │ │ │ │
+      ├─┼─┼─┤ |                                 ├─┼─┼─┼─┼─┤
+   R10│ │ │ │ |                                 : : : : : :
+      ├─┼─┼─┤ |                                 ├─┼─┼─┼─┼─┤
+   R11│ │ │ │ |                             +363│ │ │ │ │ │
+      ├─┼─┼─┤ |                                 ├─┼─┼─┼─┼─┤
+   R12│ │ │ │ /                             +364│ │ │ │ │ │
+      ├─┼─┼─┤                                   └─┴─┴─┴─┴─┘
+   R13│ │ │ │ Special register, specifies
+      └─┴─┴─┘ the memory segment for JP ttt
+      ┌─┬─┬─┬─┬─┬─┐
+   PC │ │ │ │ │ │ │ program counter register [-364..+364]
+      └─┴─┴─┴─┴─┴─┘
+      ┌─┐
+    C │ │ borrow/carry flag [-1..+1]
+      └─┘
+
+  Every 3-trit register can take values from -13 to +13:
+
+  t2*9 + t1*3 + t0,
+
+  where t0,t1,t2 - trits (-1,0,+1)
+
