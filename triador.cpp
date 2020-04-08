@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <fstream>
 #include <cstring>
+#include <array>
 #include <vector>
 #include <cstdlib>
 #include <ctime>
@@ -11,13 +12,13 @@
 using namespace std;
 
 // TRIADOR state:
-vector<int> R = {0,0,0,0,0,0,0,0,0,0,0,0,0}; // 13 registers, valid range for each one -13..+13
-int  C = 0;                                  // borrow-carry flag, valid values -1,0,+1
-int PC = 0;                                  // program counter, valid range -364..+364
+array<int, 13> R = {0,0,0,0,0,0,0,0,0,0,0,0,0}; // 13 registers, valid range for each one -13..+13
+int  C = 0; // borrow-carry flag, valid values -1,0,+1
+int PC = 0; // program counter, valid range -364..+364
 
 void display_memory_state() {
-    for (int i=0; i<13; i++)
-        assert(abs(R[i])<=13);
+    for (const int &r : R)
+        assert(abs(r)<=13);
     assert(abs(C)<=1);
     assert(abs(PC)<364);
 
@@ -26,8 +27,8 @@ void display_memory_state() {
         cout << "R" << (i+1) << " ";
     }
     cout << " C   PC" << endl;
-    for (int i=0; i<13; i++)
-        cout << setw(3) << R[i] << " ";
+    for (const int &r : R)
+        cout << setw(3) << r << " ";
     cout << setw(2) << C  << "  " << setw(4) << (PC-364) << endl << endl;
 }
 
@@ -57,10 +58,10 @@ void load_program(const char *filename, vector<string> &opcodes, vector<int> &op
         assert(sub.length()==6); // the line must be at least 6 characters long
         assert(sub[2]==' ');     // the opcode is separated by a space from the argument
 
-        vector<string> allowed_opcodes = {"EX", "JP", "SK", "OP", "RR", "R1", "R2", "R3", "R4"};
+        const array<string, 9> allowed_opcodes = {"EX", "JP", "SK", "OP", "RR", "R1", "R2", "R3", "R4"};
         string opcode = sub.substr(0,2);
         bool ok = false;
-        for (string &okcode : allowed_opcodes)
+        for (const string &okcode : allowed_opcodes)
             if (opcode==okcode) ok = true;
         assert(ok);              // is it a valid opcode?
 
@@ -168,8 +169,8 @@ int main(int argc, char** argv) {
 
     // N.B. the memory is not guaranteed to be initialized!
     std::srand(std::time(nullptr));
-    for (size_t i=0; i<13; i++)
-        R[i] = std::rand()%27 - 13;
+    for (int &r : R)
+        r = std::rand()%27 - 13;
 
     vector<string> opcodes;
     vector<int>    opargs;
