@@ -54,7 +54,37 @@ The emulator prints the complete state of the Triador computer for every instruc
 Note that Triador has no input interface. To enter your data into the computer, use R1-R4 commands.
 
 ## add
-Here is [a very simple program](prog/add.txt) that writes two numbers to the registers R2 and R3 and computes their sum. The result is stored in R3:
+I want to sum two numbers written in registers R2 and R3. But the Triador knows nothing about addition! It only knows how to do increment/decrement. Let's start by writing a simple program in an environment you master. For a start, I assume that R2 and R3 are non-negative. We can decrement R2 and increment R3 simultaneously until R2 reaches zero:
+
+```cpp
+int main() {
+    unsigned int R2 = 2;
+    unsigned int R3 = 11;
+    while (R2!=0) {
+        R3++;
+        R2--;
+    }
+    return R3;
+}
+```
+
+Okay, what about signed numbers? No problem, we can adapt our code a bit in a way that the absolute value of R2 decreases with each iteration:
+
+```cpp
+int main() {
+    int R2 = -2;
+    int R3 = 13;
+    while (R2!=0) {
+        if (R2>0) R3++;
+        if (R2<0) R3--;
+        if (R2>0) R2--;
+        if (R2<0) R2++;
+    }
+    return R3;
+}
+```
+
+That is all! Here is [a very simple program](prog/add.txt) that writes two numbers to the registers R2 and R3 and computes their sum. The result is stored in R3:
 
 ![](https://raw.githubusercontent.com/ssloy/triador/master/doc/add.png)
 
