@@ -2,7 +2,7 @@
 
 Many claimed to build a ternary computer, however nobody (to the best of my knowledge) completed the project. Triador project makes no empty promises!
 
-I am building a very simple but functional 3-trit balanced ternary computer. The only building block allowed is a ternary multiplexer based on DG403 analog switches. You can find more details on the build on the [homebrew ternary computer](https://hackaday.io/project/28579-homebrew-ternary-computer) hackaday project. Also check this youtube mini-series about the hardware:
+I am building a very simple but functional 3-trit balanced ternary computer. The only building block allowed is a ternary multiplexer based on DG403 analog switches. You can find more details on the build at the [homebrew ternary computer](https://hackaday.io/project/28579-homebrew-ternary-computer) hackaday project. Also check this youtube mini-series about the hardware:
 
 [![](doc/memory-board-youtube.jpg)](https://www.youtube.com/playlist?list=PL9MBW6e0V7UIvP2vY_aKwsu93wqYq5jXJ)
 
