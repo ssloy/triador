@@ -12,7 +12,7 @@ This repository contains a program emulator that eases the debugging of the hard
 ![](doc/triador-description.png)
 
 # Instruction set
-Triador has the a very limited instruction set, it is very close to [Brainfuck](https://en.wikipedia.org/wiki/Brainfuck) in terms of expressivity, but offers a much more readable code (check for the examples below).
+Triador has a very limited instruction set, it is very close to [Brainfuck](https://en.wikipedia.org/wiki/Brainfuck) in terms of expressivity, but offers a much more readable code (check for the examples below).
 
 Triador understands 9 instructions; each instruction has a mandatory 3-trit argument. Note that the extension instruction at the moment is interpreted as [halt and catch fire](https://en.wikipedia.org/wiki/Halt_and_Catch_Fire_(computing)). Here is the complete list of available instructions:
 
