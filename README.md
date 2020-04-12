@@ -144,6 +144,7 @@ Note that R4+27 * R5 = 75, and we asked for the computer to compute 331-256. Do 
 
 There is one subtlety in this code: since I want to add three-trit numbers twice, I mimic a function call. However, Triador does not have a stack, and it knows nothing about subroutines and return addresses. No problem, I control the return address from this ersatz-subroutine via register R7:
 ```
+[...]
 SK ONO # skip if R1!=0
 JP OON # sub return 1
 JP POP # sub return 2
