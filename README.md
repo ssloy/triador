@@ -142,7 +142,12 @@ $ ./triador ../prog/long-add.txt |tail -n 3
 ```
 Note that R4+27 * R5 = 75, and we asked for the computer to compute 331-256. Do I have to explain how this code works? If you've figured out the previous two, I don't think it's necessary. We add the two upper half words, then we add the lower half words. If there is an overflow when summing up the lower halves, we increment/decrement the first sum. If you have troubles understanding this text, simply check the equivalent C++ code :)
 
-There is one subtlety in this code: since I want to add three-trit numbers twice, I mimic a function call. However, Triador does not have a stack, and it knows nothing about subroutines and return addresses. No problem, I control the return address from this ersatz-subroutine via register R7.
+There is one subtlety in this code: since I want to add three-trit numbers twice, I mimic a function call. However, Triador does not have a stack, and it knows nothing about subroutines and return addresses. No problem, I control the return address from this ersatz-subroutine via register R7:
+```
+SK ONO # skip if R1!=0
+JP OON # sub return 1
+JP POP # sub return 2
+```
 
 ## Greatest common divisor
 Of course, our example set would not be complete without [Euclid's algorithm](https://en.wikipedia.org/wiki/Euclidean_algorithm). [This program](https://github.com/ssloy/triador/blob/master/prog/gcd.txt) computes the greatest common divisor between R2 and R3,
