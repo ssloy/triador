@@ -98,8 +98,17 @@ $ ./triador ../prog/add.txt | tail -n 3
 ```
 Note that R3 contains 11, the result of -2 + 13.
 
+Triador does not support while loops directly, it uses unconditional jumps JP; branching is done via SK operation, which allows us to skip the next operation.
+
+Note that the unconditional jump command JP ttt has a mandatory three-trit argument ttt, wherease the program counter PC is a six-trit number. Three missing trits come from register R13. The JP ttt command jumps to the instruction number 27 * R13 + ttt. The very first program memory segment has the number NNN (-13), and this is why my program starts with
+```cpp
+R1 NNN # write -13 to R1
+RR NNN # copy R1 to R13
+```
+All the program fits into one segment, therefore after this initialization I do not modify R13, and all the jumps are performed in this segment.
+
 ## add with overflow control
-This program writes two numbers to the registers R2 and R3, and computes their sum. The result is stored as R3 + R4 * 27, that is, R4 can be -1, 0 or 1 and represents an eventual overflow of R2+R3.
+This program writes two numbers to the registers R2 and R3, and computes their sum. The result is stored as R3 + R4 * 27, that is, R4 can be -1, 0 or 1 and represents an eventual overflow of R2+R3. This also means that the result is stored in a word data type R3, R4.
 
 ![](https://raw.githubusercontent.com/ssloy/triador/master/doc/add-with-overflow-control.png)
 ```
@@ -110,7 +119,7 @@ $ ./triador ../prog/add-with-overflow-control.txt |tail -n 3
 Note that R3 + 27 * R4 is equal to 15, the result of 2+13 operation.
 
 ## 6-trit addition
-Are [-13..+13] registers not expressive enough? No problems, let us introduce a word data type.
+Are [-13..+13] registers not expressive enough? No problems, let us continue with the word data type.
 [This program](https://github.com/ssloy/triador/blob/master/prog/long-add.txt) writes a 6-trit number to R1,R2 and a second 6-trit number to R3,R4. Then a 6-trit sum is computed and stored in R4,R5.
 
 ![](https://raw.githubusercontent.com/ssloy/triador/master/doc/long-add.png)
