@@ -116,7 +116,18 @@ $ ./triador ../prog/add-with-overflow-control.txt |tail -n 3
  R1  R2  R3  R4  R5  R6  R7  R8  R9 R10 R11 R12 R13  C   PC
 -12   0 -12   1  -9   2 -12  -6   4   5   6   7 -13  0  -338
 ```
-Note that R3 + 27 * R4 is equal to 15, the result of 2+13 operation.
+Note that R3 + 27 * R4 is equal to 15, the result of 2+13 operation. It is easy to see that I have simply added the overflow tracking into the addition:
+```cpp
+[...]
+SK OOO # skip if C==0        
+JP OPO # overflow ───────┐   
+JP PNO # no overflow ────│─┐ 
+R4 OOP # write 1 to R4 <─┘ │ 
+SK OOP # skip if C==1      │ 
+R4 OON # write -1 to R4    │ 
+RR OPN # copy R2 to R1 <───┘ 
+[...]
+```
 
 ## 6-trit addition
 Are [-13..+13] registers not expressive enough? No problems, let us continue with the word data type.
