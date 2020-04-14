@@ -23,12 +23,7 @@ enable_cxx_compiler_flag_if_supported("-O3")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}")
 
-file(GLOB SOURCES
-    "${SRC_DIR}/*.h"
-    "${SRC_DIR}/*.cpp"
-)
-
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_executable(${PROJECT_NAME} triador.cpp main.cpp)
 target_include_directories(${PROJECT_NAME} PRIVATE "${SRC_DIR}")
 
 
