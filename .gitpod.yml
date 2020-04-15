@@ -2,6 +2,7 @@ image:
   file: Dockerfile
 tasks:
 - command: >
+    open prog/add.txt &&
     mkdir --parents build &&
     cd build &&
     cmake .. &&

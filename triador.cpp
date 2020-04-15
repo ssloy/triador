@@ -170,13 +170,13 @@ void Triador::cycle() {
         case 1: { // R1: write arg to the register R1
                     R[0] = arg;
                 } break;
-        case 2: { // R2: write arg to the register R1
+        case 2: { // R2: write arg to the register R2
                     R[1] = arg;
                 } break;
-        case 3: { // R3: write arg to the register R1
+        case 3: { // R3: write arg to the register R3
                     R[2] = arg;
                 } break;
-        case 4: { // R4: write arg to the register R1
+        case 4: { // R4: write arg to the register R4
                     R[3] = arg;
                 } break;
     }
