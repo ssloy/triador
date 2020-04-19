@@ -59,7 +59,24 @@ int main() {
 
     auto t1 = std::chrono::high_resolution_clock::now();
     while (1) {
-        if (0) { // sleep if less than 20 ms since last re-rendering
+        { // poll events and update player's state (walk/turn flags); TODO: move this block to a more appropriate place
+            SDL_Event event;
+            if (SDL_PollEvent(&event)) {
+                if (SDL_QUIT==event.type || (SDL_KEYDOWN==event.type && SDLK_ESCAPE==event.key.keysym.sym)) break;
+                if (SDL_KEYUP==event.type) {
+                    if (      's'==event.key.keysym.sym ||     'w'==event.key.keysym.sym) triador.program[26].second = 0;
+                    if (SDLK_DOWN==event.key.keysym.sym || SDLK_UP==event.key.keysym.sym) triador.program[19].second = 0;
+                }
+                if (SDL_KEYDOWN==event.type) {
+                    if ('s'==event.key.keysym.sym) triador.program[26].second =  1;
+                    if ('w'==event.key.keysym.sym) triador.program[26].second = -1;
+                    if (SDLK_DOWN==event.key.keysym.sym) triador.program[19].second =  1;
+                    if (SDLK_UP  ==event.key.keysym.sym) triador.program[19].second = -1;
+                }
+            }
+        }
+
+        { // sleep if less than 20 ms since last re-rendering
             auto t2 = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double, std::milli> fp_ms = t2 - t1;
             if (fp_ms.count()<150) {
@@ -78,10 +95,8 @@ int main() {
         int paddle_l = triador.R[6];
         int paddle_r = triador.R[7];
         int score = triador.R[5];
-//      std::cerr << paddle_l << " " << paddle_r << std::endl;
 
-
-        SDL_Rect dot_rect = {435-8+(dot_x*58*5)/13, 362-8+(dot_y*58*4)/13, 16, 16};
+        SDL_Rect dot_rect = {435-8+(dot_x*58*5)/14, 362-8+(dot_y*58*4)/13, 16, 16};
         SDL_RenderCopy(renderer, scope_texture, NULL, NULL);
         SDL_RenderCopy(renderer, dot_texture, NULL, &dot_rect);
         SDL_Rect paddle_l_rect = paddle_dest_rect(paddle_l, 435-8-58*5);
@@ -113,33 +128,6 @@ int main() {
         }
 
         SDL_RenderPresent(renderer);
-
-
-        { // poll events and update player's state (walk/turn flags); TODO: move this block to a more appropriate place
-            SDL_Event event;
-            if (SDL_PollEvent(&event)) {
-                if (SDL_QUIT==event.type || (SDL_KEYDOWN==event.type && SDLK_ESCAPE==event.key.keysym.sym)) break;
-                /*
-                   if (SDL_KEYUP==event.type) {
-                   if ('a'==event.key.keysym.sym || 'd'==event.key.keysym.sym) gs.player.turn = 0;
-                   if ('w'==event.key.keysym.sym || 's'==event.key.keysym.sym) gs.player.walk = 0;
-                   }
-                   if (SDL_KEYDOWN==event.type) {
-                   if ('a'==event.key.keysym.sym) gs.player.turn = -1;
-                   if ('d'==event.key.keysym.sym) gs.player.turn =  1;
-                   if ('w'==event.key.keysym.sym) gs.player.walk =  1;
-                   if ('s'==event.key.keysym.sym) gs.player.walk = -1;
-                   }
-                 */
-                if (SDL_KEYDOWN==event.type) {
-                    if ('s'==event.key.keysym.sym) if (paddle_l< 13) paddle_l++;
-                    if ('w'==event.key.keysym.sym) if (paddle_l>-13) paddle_l--;
-                    if (SDLK_DOWN==event.key.keysym.sym) if (paddle_r< 13) paddle_r++;
-                    if (SDLK_UP  ==event.key.keysym.sym) if (paddle_r>-13) paddle_r--;
-                }
-            }
-        }
-
     }
 
     SDL_DestroyTexture(score_texture);
