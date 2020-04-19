@@ -1,11 +1,15 @@
 image:
   file: Dockerfile
+ports:
+- port: 6080
+  onOpen: notify
+- port: 5900
+  onOpen: ignore
 tasks:
 - command: >
-    open prog/add.txt &&
     mkdir --parents build &&
     cd build &&
     cmake .. &&
     make &&
-    ./triador ../prog/add.txt &&
+    ./triador-pong &&
     cd ..

@@ -1,0 +1,189 @@
+R1 OOO # NNN NNN #
+RR NPO # NNN NNO # zero score (R6)
+R1 OOO # NNN NNP #
+RR NPP # NNN NON # reserve ret address (R5)
+R1 OPP # NNN NOO #
+RR NNP # NNN NOP # ball x (R11)
+R1 PNN # NNN NPN #
+RR NNO # NNN NPO # ball y (R12)
+R1 OON # NNN NPP #
+RR NOO # NNN ONN # ball dx (R9)
+R1 ONP # NNN ONO #
+RR NON # NNN ONP # ball dy (R10)
+R1 NPO # NNN OON #
+RR NPN # NNN OOO # left paddle (R7)
+R1 POO # NNN OOP #
+RR NOP # NNN OPN # right paddle (R8)
+RR OOO # NNN OPO # do nothing
+RR PON # NNN OPP # copy R8 to R1
+RR OOO # NNN PNN # move the right paddle
+SK OOO # NNN PNO # skip if C==0
+OP NOP # NNN PNP # R1 = -R1
+RR NOP # NNN PON # copy R1 to R8
+RR PNP # NNN POO # copy R7 to R1
+RR OOO # NNN POP # move the pad L
+SK OOO # NNN PPN # skip if C==0
+OP NOP # NNN PPO # R1 = -R1
+RR NPN # NNN PPP # copy R1 to R7
+R1 OOO # NNO NNN #
+RR NPP # NNO NNO # 0->R5
+RR PPO # NNO NNP #
+RR ONO # NNO NON # copy Y to R3
+RR POP # NNO NOO #
+RR ONP # NNO NOP # copy dY to R2
+R1 NOP # NNO NPN #
+RR NNN # NNO NPO # choose segment NOP
+JP NNN # NNO NPP # call add R2+R3
+RR OPO # NNO ONN # copy Y+dY to R1
+SK NNO # NNO ONO # skip if R4!=0
+JP PNN # NNO ONP # no overflow
+RR POP # NNO OON # R10->R1
+OP NOP # NNO OOO # R1=-R1
+RR NON # NNO OOP # R1->R10
+R1 PPP # NNO OPN # R1=13
+SK PPP # NNO OPO # skip if R4>0
+R1 NNN # NNO OPP # R1=-13
+RR NNO # NNO PNN # R1->R12
+R1 OOP # NNO PNO #
+RR NPP # NNO PNP # 1->R5
+RR PPN # NNO PON #
+RR ONO # NNO POO # copy X to R3
+RR POO # NNO POP #
+RR ONP # NNO PPN # copy dX to R2
+R1 NOP # NNO PPO #
+RR NNN # NNO PPP # choose segment NOP
+JP NNN # NNP NNN # call add R2+R3
+RR OPO # NNP NNO # copy X+dX to R1
+SK NNO # NNP NNP # skip if R4!=0
+JP ONO # NNP NON # no overflow
+RR POO # NNP NOO # R9->R1
+OP NOP # NNP NOP # R1=-R1
+RR NOO # NNP NPN # R1->R9
+R1 PPP # NNP NPO # R1=13
+SK PPP # NNP NPP # skip if R4>0
+R1 NNN # NNP ONN # R1=-13
+RR NNP # NNP ONO # R1->R11
+R1 NOO # NNP ONP #
+RR NNN # NNP OON # choose segment NOO
+SK NNO # NNP OOO # skip if R4!=0
+JP PPN # NNP OOP # no overflow
+RR PNP # NNP OPN # copy L to R1
+SK PPN # NNP OPO # skip if R4<0
+RR PON # NNP OPP # copy R to R1
+OP NOP # NNP PNN # R1 = -R1
+RR ONP # NNP PNO # copy R1 to R2
+RR PPO # NNP PNP #
+RR ONO # NNP PON # copy Y to R3
+R1 OPN # NNP POO #
+RR NPP # NNP POP # 2->R5
+R1 NOP # NNP PPN #
+RR NNN # NNP PPO # choose segment NOP
+JP NNN # NNP PPP # call add R2+R3
+R1 NOO # NON NNN #
+RR NNN # NON NNO # choose segment NOO
+RR OPO # NON NNP # copy Y-(X<0?L:R) to R1 
+SK ONN # NON NON # skip if R1>=0
+OP NOP # NON NOO # R1 = -R1
+SK ONO # NON NOP # skip if R1!=0
+JP PPN # NON NPN # pad ok, loop
+RR OON # NON NPO # R1--
+SK ONO # NON NPP # skip if R1!=0
+JP PPN # NON ONN # pad ok, loop
+RR OON # NON ONO # R1--
+SK ONO # NON ONP # skip if R1!=0
+JP PPN # NON OON # pad ok, loop
+RR OON # NON OOO # R1--
+SK ONO # NON OOP # skip if R1!=0
+JP PPN # NON OPN # pad ok, loop
+RR PPN # NON OPO #
+RR ONP # NON OPP # copy X to R2
+RR PNO # NON PNN # copy R6 to R1
+SK PNN # NON PNO # skip if X<0
+RR OON # NON PNP # R1--
+SK PNP # NON PON # skip if X>0
+RR OOP # NON POO # R1++
+RR NPO # NON POP # copy R1 to R6
+RR OOO # NON PPN #
+RR OOO # NON PPO #
+RR OOO # NON PPP #
+RR OOO # NOO NNN #
+RR OOO # NOO NNO #
+RR OOO # NOO NNP #
+RR OOO # NOO NON #
+RR OOO # NOO NOO #
+RR OOO # NOO NOP #
+RR OOO # NOO NPN #
+RR OOO # NOO NPO #
+RR OOO # NOO NPP #
+RR OOO # NOO ONN #
+RR OOO # NOO ONO #
+RR OOO # NOO ONP #
+RR OOO # NOO OON #
+RR OOO # NOO OOO #
+RR OOO # NOO OOP #
+RR OOO # NOO OPN #
+RR OOO # NOO OPO #
+RR OOO # NOO OPP #
+RR OOO # NOO PNN #
+RR OOO # NOO PNO #
+RR OOO # NOO PNP #
+RR OOO # NOO PON #
+RR OOO # NOO POO #
+RR OOO # NOO POP #
+R1 NNN # NOO PPN #
+RR NNN # NOO PPO # choose segment NNN
+JP OPO # NOO PPP # while (true)
+R1 OOO # NOP NNN #
+RR ONN # NOP NNO # write 0 to R4
+RR OPO # NOP NNP # copy R3 to R1 <─────┐
+SK NPO # NOP NON # skip if R2!=0       │
+JP POP # NOP NOO # break the loop ─────│─┐
+SK PNP # NOP NOP # skip if R2>0        │ │
+RR OON # NOP NPN # R1--                │ │
+SK PNN # NOP NPO # skip if R2<0        │ │
+RR OOP # NOP NPP # R1++                │ │
+RR ONO # NOP ONN # copy R1 to R3       │ │
+SK OOO # NOP ONO # skip if C==0        │ │
+JP OOO # NOP ONP # overflow ───────┐   │ │
+JP OPO # NOP OON # no overflow ────│─┐ │ │
+R4 OOP # NOP OOO # write 1 to R4 <─┘ │ │ │
+SK OOP # NOP OOP # skip if C==1      │ │ │
+R4 OON # NOP OPN # write -1 to R4    │ │ │
+RR OPN # NOP OPO # copy R2 to R1 <───┘ │ │
+SK PNP # NOP OPP # skip if R2>0        │ │
+RR OOP # NOP PNN # R1++                │ │
+SK PNN # NOP PNO # skip if R2<0        │ │
+RR OON # NOP PNP # R1--                │ │
+RR ONP # NOP PON # copy R1 to R2       │ │
+JP NNP # NOP POO # main loop ──────────┘ │
+R1 NNO # NOP POP # <─────────────────────┘
+RR NNN # NOP PPN # choose segment NNO
+RR PNN # NOP PPO # copy R5 to R1
+SK ONO # NOP PPP # skip if R1!=0
+JP ONN # NPP NNN # return X+dX
+R1 NNP # NPN NNO #
+RR NNN # NPN NNP # choose segment NNP
+RR PNN # NPN NON # copy R5 to R1
+RR OON # NPN NOO # R1--
+RR NPP # NPN NOP # copy R1 to R5
+SK ONO # NPN NPN # skip if R1!=0
+JP NNO # NPN NPO # return Y+dY
+R1 NON # NPN NPP #
+RR NNN # NPN ONN # choose segment NON
+RR PNN # NPN ONO # copy R5 to R1
+RR OON # NPN ONP # R1--
+RR NPP # NPN OON # copy R1 to R5
+SK ONO # NPN OOO # skip if R1!=0
+JP NNN # NPN OOP # return Y-(X<0?L:R)
+EX OOO # NPN OPN # HCF
+RR OOO # NPN OPO #
+RR OOO # NPN OPP #
+RR OOO # NPN PNN #
+RR OOO # NPN PNO #
+RR OOO # NPN PNP #
+RR OOO # NPN PON #
+RR OOO # NPN POO #
+RR OOO # NPN POP #
+RR OOO # NPN PPN #
+RR OOO # NPN PPO #
+RR OOO # NPN PPP #

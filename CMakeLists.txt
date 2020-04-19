@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8)
-project (triador)
+project (triador-pong)
 
 set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
@@ -22,8 +22,16 @@ enable_cxx_compiler_flag_if_supported("-std=c++11")
 enable_cxx_compiler_flag_if_supported("-O3")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}")
+find_package(SDL2 REQUIRED)
+include_directories(${SDL2_INCLUDE_DIRS})
 
-add_executable(${PROJECT_NAME} triador.cpp main.cpp)
+file(GLOB SOURCES
+    "${SRC_DIR}/*.h"
+    "${SRC_DIR}/*.cpp"
+)
+
+add_executable(${PROJECT_NAME} ${SOURCES})
+target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})
 target_include_directories(${PROJECT_NAME} PRIVATE "${SRC_DIR}")
 
 
