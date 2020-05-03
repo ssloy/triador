@@ -59,7 +59,7 @@ int main() {
 
     auto t1 = std::chrono::high_resolution_clock::now();
     while (1) {
-        { // poll events and update player's state (walk/turn flags); TODO: move this block to a more appropriate place
+        { // poll events and update player's state (walk/turn flags);
             SDL_Event event;
             if (SDL_PollEvent(&event)) {
                 if (SDL_QUIT==event.type || (SDL_KEYDOWN==event.type && SDLK_ESCAPE==event.key.keysym.sym)) break;
@@ -79,7 +79,7 @@ int main() {
         { // sleep if less than 20 ms since last re-rendering
             auto t2 = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double, std::milli> fp_ms = t2 - t1;
-            if (fp_ms.count()<150) {
+            if (fp_ms.count()<100) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(3));
                 continue;
             }
@@ -96,13 +96,13 @@ int main() {
         int paddle_r = triador.R[7];
         int score = triador.R[5];
 
-        SDL_Rect dot_rect = {435-8+(dot_x*58*5)/14, 362-8+(dot_y*58*4)/13, 16, 16};
-        SDL_RenderCopy(renderer, scope_texture, NULL, NULL);
-        SDL_RenderCopy(renderer, dot_texture, NULL, &dot_rect);
+        SDL_Rect dot_rect = {435-8+int((dot_x*58*5)/13.5), 362-8+(dot_y*58*4)/13, 16, 16};
+        SDL_RenderCopy(renderer, scope_texture, nullptr, nullptr);
+        SDL_RenderCopy(renderer, dot_texture, nullptr, &dot_rect);
         SDL_Rect paddle_l_rect = paddle_dest_rect(paddle_l, 435-8-58*5);
         SDL_Rect paddle_r_rect = paddle_dest_rect(paddle_r, 435-8+58*5);
-        SDL_RenderCopy(renderer, paddle_texture, NULL, &paddle_l_rect);
-        SDL_RenderCopy(renderer, paddle_texture, NULL, &paddle_r_rect);
+        SDL_RenderCopy(renderer, paddle_texture, nullptr, &paddle_l_rect);
+        SDL_RenderCopy(renderer, paddle_texture, nullptr, &paddle_r_rect);
 
         if (score>=0) {
             SDL_Rect src1 = {0,0,8,16};
@@ -124,7 +124,7 @@ int main() {
             int left = 435 + (score>0?i:-i-1)*22;
             int top = 594-8;
             SDL_Rect score_rect = {left, top, 22, 16};
-            SDL_RenderCopy(renderer, score_texture, NULL, &score_rect);
+            SDL_RenderCopy(renderer, score_texture, nullptr, &score_rect);
         }
 
         SDL_RenderPresent(renderer);
