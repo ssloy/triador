@@ -1,89 +1,95 @@
  ════════════════════════════════════════════════════════════
                   TRIADOR instruction set
  ════════════════════════════════════════════════════════════
-  (for lisibility we use N,O,P instead of -1,0,+1)
-  ┌───────┬────────┬───────────────────────────────────────┐
-  │op code│mnemonic│ description                           │
-  ├───────┼────────┼───────────────────────────────────────┤
-  │ NNttt │ EX ttt │ extension commands (work in progress) │
-  ├───────┼────────┼───────────────────────────────────────┤
-  │ NOttt │ JP ttt │ unconditional jump to R13*27+ttt      │
-  ├───────┼────────┼───────────────────────────────────────┤
-  │ NPttt │ SK ttt │ conditional skips of the next command │
-  ├───────┼────────┼───────────────────────────────────────┤
-  │ ONttt │ OP ttt │ tritwise unary operation over R1      │
-  ├───────┼────────┼───────────────────────────────────────┤
-  │ OOttt │ RR ttt │ copying between registers             │
-  ├───────┼────────┼───────────────────────────────────────┤
-  │ OPttt │ R1 ttt │ write ttt to the register R1          │
-  ├───────┼────────┼───────────────────────────────────────┤
-  │ PNttt │ R2 ttt │ write ttt to the register R2          │
-  ├───────┼────────┼───────────────────────────────────────┤
-  │ POttt │ R3 ttt │ write ttt to the register R3          │
-  ├───────┼────────┼───────────────────────────────────────┤
-  │ PPttt │ R4 ttt │ write ttt to the register R4          │
-  └───────┴────────┴───────────────────────────────────────┘
+
+     Triador has 9 instructions in total;
+     each instruction is followed by a mandatory argument
+
+     ┌────────┬─────────────────────────────────────────┐
+     │mnemonic│ description                             │
+     ├────────┼─────────────────────────────────────────┤
+     │   EX   │ extension commands (work in progress)   │
+     ├────────┼─────────────────────────────────────────┤
+     │   JP   │ unconditional jump to R13*27 + argument │
+     ├────────┼─────────────────────────────────────────┤
+     │   SK   │ conditional skips of the next command   │
+     ├────────┼─────────────────────────────────────────┤
+     │   OP   │ tritwise unary operation over R1        │
+     ├────────┼─────────────────────────────────────────┤
+     │   RR   │ copying between registers               │
+     ├────────┼─────────────────────────────────────────┤
+     │   R1   │ write the argument to the register R1   │
+     ├────────┼─────────────────────────────────────────┤
+     │   R2   │ write the argument to the register R2   │
+     ├────────┼─────────────────────────────────────────┤
+     │   R3   │ write the argument to the register R3   │
+     ├────────┼─────────────────────────────────────────┤
+     │   R4   │ write the argument to the register R4   │
+     └────────┴─────────────────────────────────────────┘
 
   Additional comments:
-  - ttt means a 3-trit number with values
-    from NNN (-13) to PPP (+13)
 
-  - RR ttt instruction copies a register to/from R1 or
-    performs an increment/decrement over R1
-    RR NNN — copy R1 to R13
-    RR NNO — copy R1 to R12
-    RR NNP — copy R1 to R11
-    RR NON — copy R1 to R10
-    RR NOO — copy R1 to R9
-    RR NOP — copy R1 to R8
-    RR NPN — copy R1 to R7
-    RR NPO — copy R1 to R6
-    RR NPP — copy R1 to R5
-    RR ONN — copy R1 to R4
-    RR ONO — copy R1 to R3
-    RR ONP — copy R1 to R2
-    RR OON — decrement R1, set borrow/carry flag
-    RR OOO — no operation
-    RR OOP — increment R1, set borrow/carry flag
-    RR OPN — copy R2  to R1
-    RR OPO — copy R3  to R1
-    RR OPP — copy R4  to R1
-    RR PNN — copy R5  to R1
-    RR PNO — copy R6  to R1
-    RR PNP — copy R7  to R1
-    RR PON — copy R8  to R1
-    RR POO — copy R9  to R1
-    RR POP — copy R10 to R1
-    RR PPN — copy R11 to R1
-    RR PPO — copy R12 to R1
-    RR PPP — copy R13 to R1
+  - mandatory argument
+      is a 3-trit number from the [-13..+13] range
 
-  - SK ttt skips one instruction depending on
+  - "RR arg" instruction copies a register to/from R1 or
+    performs an increment/decrement over R1:
+
+      RR -13: copy R1 to R13
+      RR -12: copy R1 to R12
+      RR -11: copy R1 to R11
+      RR -10: copy R1 to R10
+      RR  -9: copy R1 to R9
+      RR  -8: copy R1 to R8
+      RR  -7: copy R1 to R7
+      RR  -6: copy R1 to R6
+      RR  -5: copy R1 to R5
+      RR  -4: copy R1 to R4
+      RR  -3: copy R1 to R3
+      RR  -2: copy R1 to R2
+      RR  -1: decrement R1, set borrow/carry flag C
+      RR   0: do nothing
+      RR   1: increment R1, set borrow/carry flag C
+      RR   2: copy R2  to R1
+      RR   3: copy R3  to R1
+      RR   4: copy R4  to R1
+      RR   5: copy R5  to R1
+      RR   6: copy R6  to R1
+      RR   7: copy R7  to R1
+      RR   8: copy R8  to R1
+      RR   9: copy R9  to R1
+      RR  10: copy R10 to R1
+      RR  11: copy R11 to R1
+      RR  12: copy R12 to R1
+      RR  13: copy R13 to R1
+
+  - "SK arg" skips one instruction depending on
     the sign of R1,R2,R3,R4 or the borrow/carry flag C:
-    SK NNN - skip if R4 >= 0
-    SK NNO - skip if R4 != 0
-    SK NNP - skip if R4 <= 0
-    SK NON - skip if R3 >= 0
-    SK NOO - skip if R3 != 0
-    SK NOP - skip if R3 <= 0
-    SK NPN - skip if R2 >= 0
-    SK NPO - skip if R2 != 0
-    SK NPP - skip if R2 <= 0
-    SK ONN - skip if R1 >= 0
-    SK ONO - skip if R1 != 0
-    SK ONP - skip if R1 <= 0
-    SK OON - skip if C == N
-    SK OOO - skip if C == O
-    SK OOP - skip if C == P
-    SK OPN - skip if R1 <  0
-    SK OPO - skip if R1 == 0
-    SK OPP - skip if R1 >  0
-    SK PNN - skip if R2 <  0
-    SK PNO - skip if R2 == 0
-    SK PNP - skip if R2 >  0
-    SK PON - skip if R3 <  0
-    SK POO - skip if R3 == 0
-    SK POP - skip if R3 >  0
-    SK PPN - skip if R4 <  0
-    SK PPO - skip if R4 == 0
-    SK PPP - skip if R4 >  0
+
+      SK -13: skip if R4 <= 0
+      SK -12: skip if R4 != 0
+      SK -11: skip if R4 >= 0
+      SK -10: skip if R3 <= 0
+      SK  -9: skip if R3 != 0
+      SK  -8: skip if R3 >= 0
+      SK  -7: skip if R2 <= 0
+      SK  -6: skip if R2 != 0
+      SK  -5: skip if R2 >= 0
+      SK  -4: skip if R1 <= 0
+      SK  -3: skip if R1 != 0
+      SK  -2: skip if R1 >= 0
+      SK  -1: skip if  C == N
+      SK   0: skip if  C == O
+      SK   1: skip if  C == P
+      SK   2: skip if R1 <  0
+      SK   3: skip if R1 == 0
+      SK   4: skip if R1 >  0
+      SK   5: skip if R2 <  0
+      SK   6: skip if R2 == 0
+      SK   7: skip if R2 >  0
+      SK   8: skip if R3 <  0
+      SK   9: skip if R3 == 0
+      SK  10: skip if R3 >  0
+      SK  11: skip if R4 <  0
+      SK  12: skip if R4 == 0
+      SK  13: skip if R4 >  0

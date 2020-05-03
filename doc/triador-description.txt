@@ -1,6 +1,7 @@
  ═══════════════════════════════════════════════════════════
         Description of the ternary computer TRIADOR
  ═══════════════════════════════════════════════════════════
+
   General purpose
      registers
  trits 2 1 0  (a trit can take -1,0,+1 values)
@@ -30,7 +31,7 @@
    R12│ │ │ │ /                             +364│ │ │ │ │ │
       ├─┼─┼─┤                                   └─┴─┴─┴─┴─┘
    R13│ │ │ │ Special register, specifies
-      └─┴─┴─┘ the memory segment for JP ttt
+      └─┴─┴─┘ the memory segment for JP arg
       ┌─┬─┬─┬─┬─┬─┐
    PC │ │ │ │ │ │ │ program counter register [-364..+364]
       └─┴─┴─┴─┴─┴─┘

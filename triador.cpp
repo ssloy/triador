@@ -1,6 +1,7 @@
 #undef NDEBUG
 #include <cassert>
 #include <iostream>
+#include <sstream>
 #include <iomanip>
 #include <fstream>
 #include <cstring>
@@ -40,23 +41,27 @@ void Triador::display_memory_state() {
     cout << " C   PC      opcode" << endl;
     for (const int &r : R)
         cout << setw(3) << r << " ";
-    cout << setw(2) << C  << "  " << setw(4) << PC << "     " << allowed_opcodes[program[PC+364].first+4] << " " << program[PC+364].second << endl << endl;
+    cout << setw(2) << C  << "  " << setw(4) << PC << "     ";
+    if (program.size()) cout << allowed_opcodes[program[PC+364].first+4] << " " << program[PC+364].second;
+    else cout << "-- ---";
+    cout << endl << endl;
 }
 
 void Triador::load_program(const char *filename) {
     // The program file must contain a single instruction per line.
-    // The instruction must be in the first 6 characters of each line, any character beyond the first 6 is discarded.
+    // An instruction is a two-character opcode followed by an integer number;
+    // any character beyond the instruction is discarded (considered to be a comment).
     // Therefore, each line must contain one of the following instructions,
-    // where ttt means a 3-trit number with values from NNN (-13) to PPP (+13):
-    // EX ttt
-    // JP ttt
-    // SK ttt
-    // OP ttt
-    // RR ttt
-    // R1 ttt
-    // R2 ttt
-    // R3 ttt
-    // R4 ttt
+    // where arg means an integer number with values from -13 to +13:
+    // EX arg
+    // JP arg
+    // SK arg
+    // OP arg
+    // RR arg
+    // R1 arg
+    // R2 arg
+    // R3 arg
+    // R4 arg
     program = std::vector<std::pair<int, int> >();
     ifstream in;
     in.open(filename, ifstream::in);
@@ -65,29 +70,24 @@ void Triador::load_program(const char *filename) {
     while (!in.eof()) {
         getline(in, line);
         if (!line.length()) break;
-        string sub = line.substr(0, 6);
 
-        assert(sub.length()==6); // the line must be at least 6 characters long
-        assert(sub[2]==' ');     // the opcode is separated by a space from the argument
+        istringstream iss(line.c_str());
+        string opcode("trash"); // invalid value initialization
+        int arg = 14;           // invalid value initialization
+        iss >> opcode >> arg;
 
-        string opcode = sub.substr(0,2);
         int instruction = -5; // out of bounds initialization
         for (int i=0; i<9; i++) {
             if (opcode!=allowed_opcodes[i]) continue;
             instruction = i-4;
             break;
         }
-        assert(abs(instruction)<=4); // is it a valid opcode?
 
-        for (size_t i=3; i<6; i++)
-            assert(sub[i]=='N' || sub[i]=='O' || sub[i]=='P'); // do we have a valid 3-trit argument?
-
-        int arg = 0; // convert the 3-trit string (e.g. "NPP") to an actual int value (-5)
-        for (size_t i=0; i<3; i++) {
-            int trit = sub[5-i]=='N' ? -1 : (sub[5-i]=='O' ? 0 : 1);
-            int pwr = i==0 ? 1 : (i==1 ? 3 : 9);
-            arg += pwr*trit;
+        if (!iss || abs(instruction)>4 || abs(arg)>13) {  // is it a valid instruction?
+            cerr << "Warning: bad program formatting" << endl;
+            break;
         }
+
         program.push_back(make_pair(instruction, arg));
     }
 }
@@ -116,6 +116,7 @@ void binary_to_ternary(const int value, int ttt[3]) {
 }
 
 void Triador::cycle() {
+    if (!program.size()) return;
     int opcode = program[PC+364].first;
     int arg    = program[PC+364].second;
     assert(abs(opcode)<=4 && abs(arg)<=13);
@@ -137,9 +138,9 @@ void Triador::cycle() {
                              if (cmp==1 && reg==0) PC++;
                              if (cmp==2 && reg >0) PC++;
                          } else {
-                             if (cmp==0 && reg<=0) PC++;
+                             if (cmp==0 && reg>=0) PC++;
                              if (cmp==1 && reg!=0) PC++;
-                             if (cmp==2 && reg>=0) PC++;
+                             if (cmp==2 && reg<=0) PC++;
                          }
                      } else { // skip w.r.t C value
                          if (arg==-1 && C==-1) PC++;
@@ -187,6 +188,7 @@ void Triador::cycle() {
 void Triador::run() {
     assert_memory_state();
     display_memory_state();
+    if (!program.size()) return;
     while (1) {
         cycle();
         assert_memory_state();

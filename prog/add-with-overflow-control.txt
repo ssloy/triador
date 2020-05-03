@@ -1,27 +1,27 @@
-R2 OPN # write  2 to R2                                               ┌─────────────────────────────────┐
-R3 PPP # write 13 to R3           ┌─────────────────────────────────┐ │ int C, R1, R2=2, R3=13, R4=0;   │
-R4 OOO # write  0 to R4           │ This program computes R2+R3,    │ │ void hardware_overflow() {      │
-R1 NNN #                          │ the result is stored as R3+R4*27│ │     C = R1>13?1:(R1<-13?-1:0);  │
-RR NNN # choose segment NNN       │ Side effects: R2, R1 and C      │ │     if (R1> 13) R1 -= 27;       │
-RR OPO # copy R3 to R1 <─────┐    │ are destroyed.                  │ │     if (R1<-13) R1 += 27;       │
-SK NPO # skip if R2!=0       │    │                                 │ │ }                               │
-JP PPP # break the loop ─────│─┐  │ Here is a C++ world equavalent ──>│ int main() {                    │
-SK PNP # skip if R2>0        │ │  └─────────────────────────────────┘ │     while (R2!=0) {             │
-RR OON # R1--                │ │                                      │         R1=R3;                  │
-SK PNN # skip if R2<0        │ │                                      │         if (R2>0) R1++;         │
-RR OOP # R1++                │ │                                      │         if (R2<0) R1--;         │
-RR ONO # copy R1 to R3       │ │                                      │         hardware_overflow();    │
-SK OOO # skip if C==0        │ │                                      │         R3 = R1;                │
-JP OPO # overflow ───────┐   │ │                                      │         if (C) {                │
-JP PNO # no overflow ────│─┐ │ │                                      │             R4 = 1;             │
-R4 OOP # write 1 to R4 <─┘ │ │ │                                      │             if (C==-1) R4 = -1; │
-SK OOP # skip if C==1      │ │ │                                      │         }                       │
-R4 OON # write -1 to R4    │ │ │                                      │         R1 = R2;                │
-RR OPN # copy R2 to R1 <───┘ │ │                                      │         if (R2>0) R1--;         │
-SK PNP # skip if R2>0        │ │                                      │         if (R2<0) R1++;         │
-RR OOP # R1++                │ │                                      │         hardware_overflow();    │
-SK PNN # skip if R2<0        │ │                                      │         R2 = R1;                │
-RR OON # R1--                │ │                                      │     }                           │
-RR ONP # copy R1 to R2       │ │                                      │     return R3+27*R4;            │
-JP NOP # main loop ──────────┘ │                                      │ }                               │
-EX PPP # halt and catch fire <─┘                                      └─────────────────────────────────┘
+R2   2 # write  2 to R2                                               ┌─────────────────────────────────┐
+R3  13 # write 13 to R3           ┌─────────────────────────────────┐ │ int C, R1, R2=2, R3=13, R4=0;   │
+R4   0 # write  0 to R4           │ This program computes R2+R3,    │ │ void hardware_overflow() {      │
+R1 -13 #                          │ the result is stored as R3+R4*27│ │     C = R1>13?1:(R1<-13?-1:0);  │
+RR -13 # choose segment NNN       │ Side effects: R2, R1 and C      │ │     if (R1> 13) R1 -= 27;       │
+RR   3 # copy R3 to R1 <─────┐    │ are destroyed.                  │ │     if (R1<-13) R1 += 27;       │
+SK  -6 # skip if R2!=0       │    │                                 │ │ }                               │
+JP  13 # break the loop ─────│─┐  │ Here is a C++ world equavalent ──>│ int main() {                    │
+SK   7 # skip if R2>0        │ │  └─────────────────────────────────┘ │     while (R2!=0) {             │
+RR  -1 # R1--                │ │                                      │         R1=R3;                  │
+SK   5 # skip if R2<0        │ │                                      │         if (R2>0) R1++;         │
+RR   1 # R1++                │ │                                      │         if (R2<0) R1--;         │
+RR  -3 # copy R1 to R3       │ │                                      │         hardware_overflow();    │
+SK   0 # skip if C==0        │ │                                      │         R3 = R1;                │
+JP   3 # overflow ───────┐   │ │                                      │         if (C) {                │
+JP   6 # no overflow ────│─┐ │ │                                      │             R4 = 1;             │
+R4   1 # write 1 to R4 <─┘ │ │ │                                      │             if (C==-1) R4 = -1; │
+SK   1 # skip if C==1      │ │ │                                      │         }                       │
+R4  -1 # write -1 to R4    │ │ │                                      │         R1 = R2;                │
+RR   2 # copy R2 to R1 <───┘ │ │                                      │         if (R2>0) R1--;         │
+SK   7 # skip if R2>0        │ │                                      │         if (R2<0) R1++;         │
+RR   1 # R1++                │ │                                      │         hardware_overflow();    │
+SK   5 # skip if R2<0        │ │                                      │         R2 = R1;                │
+RR  -1 # R1--                │ │                                      │     }                           │
+RR  -2 # copy R1 to R2       │ │                                      │     return R3+27*R4;            │
+JP  -8 # main loop ──────────┘ │                                      │ }                               │
+EX   0 # halt and catch fire <─┘                                      └─────────────────────────────────┘

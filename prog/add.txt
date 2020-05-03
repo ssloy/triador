@@ -1,20 +1,20 @@
-R1 NNN # N.B. the memory is not guaranteed to be initialized
-RR NNN # initialize R13 with -13, this chooses segment NNN for jumps
-R2 ONP # write -2 to R2            ┌─────────────────────────────────┐
-R3 PPP # write 13 to R3            │ This program computes R2+R3,    │
-RR OPO # copy R3 to R1 <─┐         │ the result is stored in R3.     │
-SK NPO # skip if R2!=0   │         │ Here is a C++ world equavalent: │
-JP PNO # R2==0, terminate│ ────┐   │                                 │
-SK PNP # skip if R2>0    │     │   │      int R2 = -2;               │
-RR OON # R1--            │     │   │      int R3 = 13;               │
-SK PNN # skip if R2<0    │     │   │      while (R2!=0) {            │
-RR OOP # R1++            │     │   │          int R1 = R3;           │
-RR ONO # copy R1 to R3   │     │   │          if (R2>0) R1++;        │
-RR OPN # copy R2 to R1   │     │   │          if (R2<0) R1--;        │
-SK PNP # skip if R2>0    │     │   │          R3 = R1;               │
-RR OOP # R1++            │     │   │          R1 = R2;               │
-SK PNN # skip if R2<0    │     │   │          if (R2>0) R1--;        │
-RR OON # R1--            │     │   │          if (R2<0) R1++;        │
-RR ONP # copy R1 to R2   │     │   │          R2 = R1;               │
-JP NOO # jump here ──────┘     │   │      }                          │
-EX PPP # halt and catch fire <─┘   └─────────────────────────────────┘
+R1 -13 # N.B. the memory is not guaranteed to be initialized;
+RR -13 # initialize R13 with -13, i.e. choose segment NNN for jumps
+R2  -2 # write -2 to R2            ┌─────────────────────────────────┐
+R3  13 # write 13 to R3            │ This program computes R2+R3,    │
+RR   3 # copy R3 to R1 <────┐      │ the result is stored in R3.     │
+SK  -6 # skip if R2!=0      │      │ Here is a C++ world equavalent: │
+JP   6 # R2==0, terminate ──│──┐   │                                 │
+SK   7 # skip if R2>0       │  │   │      int R2 = -2;               │
+RR  -1 # R1--               │  │   │      int R3 = 13;               │
+SK   5 # skip if R2<0       │  │   │      while (R2!=0) {            │
+RR   1 # R1++               │  │   │          int R1 = R3;           │
+RR  -3 # copy R1 to R3      │  │   │          if (R2>0) R1++;        │
+RR   2 # copy R2 to R1      │  │   │          if (R2<0) R1--;        │
+SK   7 # skip if R2>0       │  │   │          R3 = R1;               │
+RR   1 # R1++               │  │   │          R1 = R2;               │
+SK   5 # skip if R2<0       │  │   │          if (R2>0) R1--;        │
+RR  -1 # R1--               │  │   │          if (R2<0) R1++;        │
+RR  -2 # copy R1 to R2      │  │   │          R2 = R1;               │
+JP  -9 # main loop ─────────┘  │   │      }                          │
+EX   0 # halt and catch fire <─┘   └─────────────────────────────────┘
