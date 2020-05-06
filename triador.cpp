@@ -123,7 +123,7 @@ void Triador::cycle() {
     assert(abs(opcode)<=4 && abs(arg)<=13);
 
     switch (opcode) {
-        case -4: { // EX: halt and catch fire
+        case -4: { // EX: halt and catch fire if not processed
                      if (!doEX(arg)) fHalt = true;
                      return;
                  } break;
