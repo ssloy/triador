@@ -12,7 +12,7 @@ struct Triador {
     void load_program(const char *filename); // fill program array
     void cycle();                            // execute one instruction
     void run(bool verbose = true);           // call cycle() in a loop
-    virtual bool doEX(int){return false;}    // optional EX executor
+    virtual bool do_ex(int){return false;}    // optional EX executor
 
     std::array<int, 13> R; // 13 registers, valid range for each one -13..+13
     int  C;                // borrow-carry flag, valid values -1,0,+1

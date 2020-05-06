@@ -124,7 +124,7 @@ void Triador::cycle() {
 
     switch (opcode) {
         case -4: { // EX: halt and catch fire if not processed
-                     if (!doEX(arg)) fHalt = true;
+                     if (!do_ex(arg)) fHalt = true;
                      return;
                  } break;
         case -3: { // JP: jump instruction
