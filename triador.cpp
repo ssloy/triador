@@ -24,6 +24,8 @@ Triador::Triador() {
     for (int &r : R)
         r = std::rand()%27 - 13;
     C = std::rand()%2 - 1;
+
+    fHalt = false;
 }
 
 void Triador::assert_memory_state() {
@@ -122,7 +124,8 @@ void Triador::cycle() {
     assert(abs(opcode)<=4 && abs(arg)<=13);
 
     switch (opcode) {
-        case -4: { // EX: halt and catch fire
+        case -4: { // EX: halt and catch fire if not processed
+                     if (!do_ex(arg)) fHalt = true;
                      return;
                  } break;
         case -3: { // JP: jump instruction
@@ -155,7 +158,7 @@ void Triador::cycle() {
                      binary_to_ternary(R[0], ttt_mem);
                      binary_to_ternary(arg,  ttt_arg);
                      for (int i=0; i<3; i++)
-                         ttt_res[i] = ttt_arg[ttt_mem[i]+1];
+                         ttt_res[i] = ttt_arg[1-ttt_mem[i]];
                      R[0] = ttt_res[0] + 3*ttt_res[1] + 9*ttt_res[2];
                  } break;
         case 0: { // RR: copying between registers
@@ -185,9 +188,9 @@ void Triador::cycle() {
     PC++; // advance the program counter
 }
 
-void Triador::run() {
+void Triador::run(bool verbose) {
     assert_memory_state();
-    display_memory_state();
+    if (verbose) display_memory_state();
     if (!program.size()) return;
     while (1) {
         cycle();
@@ -197,8 +200,8 @@ void Triador::run() {
             std::cerr << "Warning: PC points outside the program, halting Triador" << std::endl;
             break;
         }
-        display_memory_state();
-        if (program[PC+364].first == -4) break; // halt and catch fire
+        if (verbose) display_memory_state();
+        if (fHalt) break; // halt and catch fire
     }
 }
 
