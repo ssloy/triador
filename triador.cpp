@@ -23,6 +23,8 @@ Triador::Triador() {
     for (int &r : R)
         r = std::rand()%27 - 13;
     C = std::rand()%2 - 1;
+
+    fHalt = false;
 }
 
 void Triador::assert_memory_state() {
@@ -122,6 +124,7 @@ void Triador::cycle() {
 
     switch (opcode) {
         case -4: { // EX: halt and catch fire
+                     if (!doEX(arg)) fHalt = true;
                      return;
                  } break;
         case -3: { // JP: jump instruction
@@ -184,9 +187,9 @@ void Triador::cycle() {
     PC++; // advance the program counter
 }
 
-void Triador::run() {
+void Triador::run(bool verbose) {
     assert_memory_state();
-    display_memory_state();
+    if (verbose) display_memory_state();
     while (1) {
         cycle();
         assert_memory_state();
@@ -195,8 +198,7 @@ void Triador::run() {
             std::cerr << "Warning: PC points outside the program, halting Triador" << std::endl;
             break;
         }
-        display_memory_state();
-        if (program[PC+364].first == -4) break; // halt and catch fire
+        if (verbose) display_memory_state();
+        if (fHalt) break; // halt and catch fire
     }
 }
-
