@@ -2,11 +2,11 @@ R2 PPO # write 12 to R2
 R3 NOP # write -8 to R3
 RR OPN # copy R2 to R1 <─────────────┐
 SK ONN # skip if R1>=0               │ ┌─────────────────────────────┐
-OP NOP # R1 = -R1                    │ │ // This program computes    │
+OP PON # R1 = -R1                    │ │ // This program computes    │
 RR ONP # copy R1 to R2               │ │ // the greatest common      │
 RR OPO # copy R3 to R1               │ │ // divisor between R2       │
 SK ONP # skip if R1<=0               │ │ // and R3. The result is    │
-OP NOP # R1 = -R1                    │ │ // stored in R2.            │
+OP PON # R1 = -R1                    │ │ // stored in R2.            │
 RR ONO # copy R1 to R3               │ │ //                          │
 R1 NNO #                             │ │ // A C++ world equivalent   │
 RR NNN # choose segment NNO          │ │ // is listed below:         │

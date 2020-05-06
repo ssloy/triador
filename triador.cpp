@@ -154,7 +154,7 @@ void Triador::cycle() {
                      binary_to_ternary(R[0], ttt_mem);
                      binary_to_ternary(arg,  ttt_arg);
                      for (int i=0; i<3; i++)
-                         ttt_res[i] = ttt_arg[ttt_mem[i]+1];
+                         ttt_res[i] = ttt_arg[1-ttt_mem[i]];
                      R[0] = ttt_res[0] + 3*ttt_res[1] + 9*ttt_res[2];
                  } break;
         case 0: { // RR: copying between registers
