@@ -125,8 +125,11 @@ void Triador::cycle() {
 
     switch (opcode) {
         case -4: { // EX: halt and catch fire if not processed
-                     if (!do_ex(arg)) fHalt = true;
-                     return;
+                     if (!do_ex(arg))
+                     {
+                         fHalt = true;
+                         return;
+                     }
                  } break;
         case -3: { // JP: jump instruction
                      PC = R[12]*27 + arg;
@@ -200,8 +203,8 @@ void Triador::run(bool verbose) {
             std::cerr << "Warning: PC points outside the program, halting Triador" << std::endl;
             break;
         }
-        if (verbose) display_memory_state();
         if (fHalt) break; // halt and catch fire
+        if (verbose) display_memory_state(); // moved here to prevent memory state printing twice on halt
     }
 }
 
